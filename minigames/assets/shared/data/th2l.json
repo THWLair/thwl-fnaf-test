@@ -1,0 +1,49 @@
+{
+    "sing0Key":"String",
+    "sing1Key":"String",
+    "sing2Key":"String",
+    "sing3Key":"String",
+    "punchKey":"String",
+    "weaponKey":"String",
+    "specialKey":"String",
+    "blockKey":"String",
+    "switchKey":"String",
+    "slot1Key":"String",
+    "slot2Key":"String",
+    "slot3Key":"String",
+    "downscroll":false,
+    "blood":false,
+
+    "singerMoney":0,
+    "fighterMoney":0,
+    "combo":0,
+    "rank":0,
+    "doAnim":"String",
+
+    "Erazor":0,
+    "Darken":0,
+    "Overshadow":0,
+
+    "songPoints":0,
+    "tickets":0,
+    "money":0,
+    "lives":0,
+
+    "fighter":"String",
+    "singer":"String",
+
+    "slot1":"String",
+    "slot2":"String",
+    "slot3":"String",
+    "generator":0,
+
+    "pLvlseiko":0,
+    "wLvlseiko":0,
+    "sLvlseiko":0,
+    "bLvlseiko":0,
+
+    "hLvlbf":0,
+    "cLvlbf":0,
+    "sLvlbf":0,
+    "bLvlbf":0
+}

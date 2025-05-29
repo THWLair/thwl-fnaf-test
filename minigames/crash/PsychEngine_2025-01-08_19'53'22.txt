@@ -1,0 +1,6 @@
+states/PlayState.hx (line 2749)
+states/PlayState.hx (line 2635)
+openfl/events/EventDispatcher.hx (line 426)
+openfl/display/DisplayObject.hx (line 1398)
+
+Uncaught Error: Null Object Reference

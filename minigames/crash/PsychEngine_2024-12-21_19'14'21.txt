@@ -1,0 +1,8 @@
+flixel/group/FlxGroup.hx (line 169)
+flixel/FlxState.hx (line 111)
+flixel/FlxGame.hx (line 868)
+flixel/FlxGame.hx (line 565)
+openfl/events/EventDispatcher.hx (line 426)
+openfl/display/DisplayObject.hx (line 1398)
+
+Uncaught Error: Null Object Reference
