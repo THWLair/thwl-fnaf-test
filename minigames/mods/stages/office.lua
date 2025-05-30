@@ -15,6 +15,8 @@ function onCreate()
     tasks = 0
     needTasks = 1
 
+    tutorial = false
+
     needItem1 = ''
     needItem2 = ''
     needItem3 = ''
@@ -141,6 +143,11 @@ function onCreate()
     setProperty('office.antialiasing', false)
     addLuaSprite('office')
 
+    makeLuaSprite('geneLight', 'hailey/light4', 300)
+    setProperty('geneLight.antialiasing', false)
+    setBlendMode('geneLight', 'add')
+    addLuaSprite('geneLight')
+
     makeLuaSprite('soul0i', 'hailey/soul0-idle', 1530, 430)
     setBlendMode('soul0i', 'add')
     setProperty('soul0i.alpha', 0)
@@ -232,22 +239,29 @@ function onCreate()
     makeLuaSprite('sound_h', '', 2720, 350)
     makeGraphic('sound_h', 250, 250, '888888')
 
-    makeLuaText('iwanna', 'change to '..needMusic..'.wav', 250, 2720, 400)
+    makeLuaText('iwanna', 'change to '..needMusic..'.wav', 130, 2775, 370)
     setTextSize('iwanna', 20)
     setObjectCamera('iwanna', 'game')
     setScrollFactor('iwanna', 1, 1)
-    setTextFont('iwanna', 'tiny.ttf')
+    setTextFont('iwanna', 'ocr.ttf')
     setProperty('iwanna.antialiasing', true)
     setTextBorder('iwanna', 0)
+    setProperty('iwanna.scale.x', 1.1)
     addLuaText('iwanna', true)
 
-    makeLuaText('file', '< '..musicFile..'.wav >', 250, 2720, 460)
-    setTextSize('file', 30)
+    makeLuaSprite('musicicon', 'hailey/music', 2695, 320)
+    setBlendMode('musicicon', 'add')
+    setProperty('musicicon.alpha', 1)
+    addLuaSprite('musicicon')
+
+    makeLuaText('file', 'song'..musicFile..'.wav', 250, 2720, 523)
+    setTextSize('file', 20)
     setObjectCamera('file', 'game')
     setScrollFactor('file', 1, 1)
-    setTextFont('file', 'tiny.ttf')
+    setTextFont('file', 'ocr.ttf')
     setProperty('file.antialiasing', true)
     setTextBorder('file', 0)
+    setProperty('file.scale.x', 1.1)
     addLuaText('file', true)
 
     makeLuaSprite('warn_h', '', 1780, 400)
@@ -345,6 +359,8 @@ function onCreate()
 
     setDataFromSave('thwlTests', 'tutorial', true) 
 
+    tutorial = true
+
     makeLuaText('tuto_left', 'A to look left', 140, 130, 340)
     setTextSize('tuto_left', 24)
     setTextAlignment('tuto_left', 'left')
@@ -388,7 +404,7 @@ function onCreate()
 
     makeLuaSprite('hiding', '', 0, 0)
     makeGraphic('hiding', 1280, 720, '000000')
-    setObjectCamera('hiding', 'other')
+    setObjectCamera('hiding', 'hud')
     setProperty('hiding.alpha', 0)
     addLuaSprite('hiding')
 
@@ -473,32 +489,34 @@ function onCreatePost()
     setProperty('cheese.alpha', 0)
 
     makeLuaSprite('dark', 'hailey/dark')
-    setObjectCamera('dark', 'other')
+    setObjectCamera('dark', 'game')
+    setScrollFactor('dark', 0, 0)
     addLuaSprite('dark', true)
 
-    makeLuaText('night', 'Night '..getDataFromSave('thwlTests', 'night'), 0, 80, 50)
+    makeLuaText('night', 'Night '..getDataFromSave('thwlTests', 'night'), 0, 80, 100)
     setTextSize('night', 20)
     setTextBorder('night', 0)
     setProperty('night.alpha', 0.6)
-    setObjectCamera('night', 'other')
+    setObjectCamera('night', 'game')
+    setScrollFactor('night', 1, 0)
     setTextFont('night', 'ROCK.TTF')
     setProperty('night.antialiasing', true)
     addLuaText('night')
-    setProperty('night.alpha', 0.3)
 
     if night == 6 then
         setTextString('night', 'Custom Night')
     end
 
-    makeLuaText('tasks', '?', 1200, 0, 50)
+    makeLuaText('tasks', '?', 300, 0, 130)
     setTextSize('tasks', 20)
-    setTextAlignment('tasks', 'right')
-    setObjectCamera('tasks', 'other')
+    setTextAlignment('tasks', 'left')
+    setObjectCamera('tasks', 'game')
+    setScrollFactor('tasks', 1, 0)
     setTextBorder('tasks', 0)
+    setProperty('tasks.alpha', 0.6)
     setTextFont('tasks', 'ROCK.TTF')
     setProperty('tasks.antialiasing', true)
-    addLuaText('tasks', true)
-    setProperty('tasks.alpha', 0.3)
+    addLuaText('tasks')
 
     if night >= 5 then
         makeLuaSprite('difficulty', '')
@@ -507,7 +525,7 @@ function onCreatePost()
         addLuaSprite('difficulty', true)
         setProperty('difficulty.alpha', 0.6)
         if night == 5 then
-            makeGraphic('difficulty', 1290, 730, '440000')
+            makeGraphic('difficulty', 1290, 730, '440022')
         elseif night == 6 then
             makeGraphic('difficulty', 1290, 730, '113399')
         end
@@ -518,15 +536,16 @@ function onCreatePost()
     addLuaSprite('bs', true)
     setProperty('bs.alpha', 0)
 
-    makeLuaText('lightreset', 'disconnect services', 200, 190, 400)
+    makeLuaText('lightreset', 'disconnect services', 200, 180, 400)
     setTextSize('lightreset', 32)
     setTextBorder('lightreset', 0)
     setTextColor('lightreset', '00FF00')
+    setTextFont('lightreset', 'ocr.ttf')
     setProperty('lightreset.antialiasing', true)
     addLuaText('lightreset', true)
     setObjectCamera('lightreset', 'game')
     setScrollFactor('lightreset', 1, 1)
-    setProperty('lightreset.alpha', 1)
+    setProperty('lightreset.scale.x', 1.1)
 
     makeLuaSprite('blackScreen', '')
     makeGraphic('blackScreen', 1280, 720, '000000')
@@ -538,11 +557,20 @@ function onCreatePost()
 
     makeLuaText('cursor', '°')
     setTextSize('cursor', 30)
-    setObjectCamera('cursor', 'other')
+    setObjectCamera('cursor', 'hud')
     setTextBorder('cursor', 0)
     addLuaText('cursor', true)
     setTextFont('cursor', 'ROCC.TTF')
     setProperty('cursor.antialiasing', true)
+
+    makeLuaText('help', '...', 400)
+    setTextSize('help', 24)
+    setObjectCamera('help', 'hud')
+    setTextAlignment('help', 'left')
+    setTextBorder('help', 0)
+    addLuaText('help', true)
+    setTextFont('help', 'ROCC.TTF')
+    setProperty('help.antialiasing', true)
 
 end
 
@@ -552,6 +580,9 @@ end
 
 function onUpdate()
 
+    doTweenX('night', 'night', getProperty('camFollow.x') - 550, 0.6, 'expoOut')
+    doTweenX('tasks', 'tasks', getProperty('camFollow.x') - 550, 0.6, 'expoOut')
+
     setShaderFloat("perspective", "iTime", os.clock())
 
     setProperty('cfobj.x', getProperty('camFollow.x') - 620)
@@ -559,6 +590,10 @@ function onUpdate()
     setProperty('soul3.y', 70 + (getProperty('soul3.angle') * 2))
     setProperty('soul3.x', 2200 + getProperty('soul3.angle'))
 
+    setProperty('geneLight.alpha', getRandomFloat(0.4, 1))
+    setProperty('file.alpha', getRandomFloat(0.7, 1))
+    setProperty('iwanna.alpha', getRandomFloat(0.7, 1))
+    setProperty('musicicon.alpha', getRandomFloat(0.7, 1))
     setProperty('thing.alpha', getRandomFloat(0.3, 1))
     setProperty('site.alpha', getRandomFloat(0.7, 1))
     setProperty('site_t.alpha', getProperty('site.alpha'))
@@ -589,6 +624,54 @@ function onUpdate()
     setProperty('cursor.x', getMouseX('other'))
     setProperty('cursor.y', getMouseY('other'))
 
+    doTweenX('helpx', 'help', getMouseX('other') + 20, 0.5, 'expoOut')
+    doTweenY('helpy', 'help', getMouseY('other'), 0.5, 'expoOut')
+
+    if tutorial then
+
+    if mouseOverlaps('sound_h', 'game') then
+        setTextString('help', "If the lights go out momentarily, switch to the required song")
+    elseif mouseOverlaps('gabinet_h', 'game') then
+        setTextString('help', "If there isn't a piece of cheese below, take it from here and put it there")
+    elseif mouseOverlaps('hide_h', 'game') then
+        setTextString('help', "If you hear a whisper, hide here")
+    elseif mouseOverlaps('warn_h', 'game') then
+        setTextString('help', "Turn this thing off when it turns on")
+    elseif mouseOverlaps('asis_h', 'game') then
+        setTextString('help', "You can turn the lights on or off with this")
+    elseif mouseOverlaps('site', 'game') then
+        setTextString('help', "Location of Demon 3")
+    elseif mouseOverlaps('lilium_h', 'game') then
+        setTextString('help', "Lilium Generator (10,5s)")
+    elseif mouseOverlaps('nymphaea_h', 'game') then
+        setTextString('help', "Nymphaea Generator (10s)")
+    elseif mouseOverlaps('sativus_h', 'game') then
+        setTextString('help', "Sativus Generator (19,5s)")
+    end
+
+    end
+
+
+
+
+    if needItem1 ~= '' and mouseOverlaps('needItem1', 'game') then
+        setTextString('help', "Need <"..needItem1.."> material.")
+    elseif needItem2 ~= '' and mouseOverlaps('needItem2', 'game') then
+        setTextString('help', "Need <"..needItem2.."> material.")
+    elseif needItem3 ~= '' and mouseOverlaps('needItem3', 'game') then
+        setTextString('help', "Need <"..needItem3.."> material.")
+    else
+        if not tutorial then
+            setTextString('help', "")
+        end
+    end
+
+
+
+
+
+
+
     doTweenX('nymphaeax', 'nymphaea', getMouseX('other'), 2, 'expoOut')
     doTweenY('nymphaeay', 'nymphaea', getMouseY('other'), 2, 'expoOut')
 
@@ -610,7 +693,12 @@ function onUpdate()
             musicFile = 1
         end
 
-        setTextString('file', '< '..musicFile..'.wav >')
+        setProperty('file.alpha', 0)
+        setProperty('iwanna.alpha', 0)
+        setProperty('musicicon.alpha', 0)
+        setTextString('file', 'song'..musicFile..'.wav')
+        setProperty('file.x', 2720 + 10)
+        doTweenX('filex', 'file', 2720, 0.5, 'expoOut')
         runTimer('killSound2', 4 * musiclevel * difficulty)
     end
 
@@ -778,6 +866,12 @@ function onUpdate()
         item = ''
         needItem1 = ''
 
+        setProperty('tasks.scale.x', 1.1)
+        setProperty('tasks.scale.y', 1.1)
+        startTween('taskssc', 'tasks.scale', {x = 1, y = 1}, 0.5, {ease = 'expoOut'})
+        setProperty('tasks.alpha', 1)
+        doTweenAlpha('tasksa', 'tasks', 0.6, 0.5, 'expoOut')
+
         checkItems()
     end
 
@@ -813,6 +907,7 @@ end
 function onTimerCompleted(tag)
 
     if tag == 'tutorial' then
+        tutorial = false
         removeLuaText('tuto_left')
         removeLuaText('tuto_right')
         removeLuaText('tuto_down')
@@ -1081,6 +1176,7 @@ function onTimerCompleted(tag)
 
     if tag == 'ratEat' and soul1 then
         rat = false
+        playSound('eat', 0.03 * volume)
         setProperty('cheeseActive.alpha', 0)
         runTimer('ratKill', 10 * ttk)
     end
