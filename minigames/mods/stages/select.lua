@@ -257,7 +257,7 @@ function onCreate()
 	addLuaText('chantxt1', true)
 	setProperty('chantxt1.alpha', 0)
 
-	makeLuaText('chantxt2', "new main menu, move camera with keyboard, fixed cheese bug, now you can't put one cheese on top of another cheese", 500, 0, 240)
+	makeLuaText('chantxt2', "new main menu, move camera with keyboard, fixed cheese bug, now you can't put one cheese on top of another cheese, the generators now are counting down, new custom night", 500, 0, 240)
 	setTextSize('chantxt2', 24)
 	setTextBorder('chantxt2', 0)
 	setTextFont('chantxt2', 'ROCK.TTF')
