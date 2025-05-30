@@ -568,7 +568,7 @@ function onUpdate()
     elseif night == 5 then
         changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'hard')
     elseif night == 6 then
-        changeDiscordPresence("Hailey's Fate | Custom Harvest ", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
+        changeDiscordPresence("Hailey's Fate | Custom Harvest", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
     end
 
     if mouseClicked('left') and canRestart then
