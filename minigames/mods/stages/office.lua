@@ -7,9 +7,9 @@ function onCreate()
     hiding = false
     cooldown = false
 
-    nymphaea = 0
-    lilium = 0
-    sativus = 0
+    nymphaea = -1
+    lilium = -1
+    sativus = -1
 
     item = ''
     tasks = 0
@@ -39,6 +39,11 @@ function onCreate()
     soul0 = true
     ultimate = true
     ttk = 1
+
+    fishlevel = 1
+    musiclevel = 1
+    doorlevel = 1
+    cameralevel = 1
 
     if night == 1 then
         ultimate = false
@@ -71,7 +76,40 @@ function onCreate()
         needTasks = 12
         difficulty = 0.4
         runTimer('rare', getRandomInt(100, 220))
+    elseif night == 6 then
+        difficulty = 1
+        needTasks = 16
+        
+        soul0 = false
+        soul1 = false
+        soul2 = false
+        soul3 = false
+        ultimate = false
+
+        fishlevel = getDataFromSave('thwlTests', 'fishlevel')
+        musiclevel = getDataFromSave('thwlTests', 'musiclevel')
+        doorlevel = getDataFromSave('thwlTests', 'doorlevel')
+        cameralevel = getDataFromSave('thwlTests', 'cameralevel')
+
+        if fishlevel < 2 then
+            soul1 = true
+        end
+
+        if musiclevel < 2 then
+            soul2 = true
+        end
+
+        if doorlevel < 2 then
+            soul3 = true
+        end
+
+        if cameralevel < 2 then
+            soul0 = true
+        end
+
     end
+    
+
     
 
     
@@ -95,7 +133,11 @@ function onCreate()
 	addLuaSprite('bg')
     setProperty('bg.alpha', 0.3)
 
-    makeLuaSprite('office', 'hailey/bg')
+    if night ~= 6 then
+        makeLuaSprite('office', 'hailey/bg')
+    elseif night == 6 then
+        makeLuaSprite('office', 'hailey/bga')
+    end
     setProperty('office.antialiasing', false)
     addLuaSprite('office')
 
@@ -114,7 +156,11 @@ function onCreate()
     setProperty('soul0c.alpha', 0)
     addLuaSprite('soul0c')
 
-    makeLuaSprite('thing', 'hailey/light2', 2320, 320)
+    if night ~= 6 then
+        makeLuaSprite('thing', 'hailey/light2', 2320, 320)
+    elseif night == 6 then
+        makeLuaSprite('thing', 'hailey/light3', 2320, 320)
+    end
     setBlendMode('thing', 'add')
     addLuaSprite('thing')
 
@@ -144,7 +190,7 @@ function onCreate()
     addLuaSprite('warn')
 
 
-    if night ~= 5 then
+    if night < 5 then
         makeLuaSprite('light', 'hailey/light')
         setBlendMode('light', 'add')
         addLuaSprite('light', true)
@@ -159,6 +205,25 @@ function onCreate()
 
         doTweenX('fog1', 'fog1', -4000, 70)
         doTweenX('fog2', 'fog2', 0, 70)
+    elseif night == 6 then
+        makeLuaSprite('light', 'hailey/light')
+        setBlendMode('light', 'add')
+        addLuaSprite('light', true)
+
+        makeLuaSprite('fog1', 'hailey/coldfog')
+        setBlendMode('fog1', 'add')
+        setProperty('fog1.alpha', 0.2)
+        setScrollFactor('fog1', 1, 0)
+        addLuaSprite('fog1')
+
+        makeLuaSprite('fog2', 'hailey/coldfog', 4000)
+        setBlendMode('fog2', 'add')
+        setProperty('fog2.alpha', 0.2)
+        setScrollFactor('fog2', 1, 0)
+        addLuaSprite('fog2')
+
+        doTweenX('fog1', 'fog1', -4000, 70)
+        doTweenX('fog2', 'fog2', 0, 70)
     end
 
     makeLuaSprite('hide_h', '', 3200, 50)
@@ -167,10 +232,11 @@ function onCreate()
     makeLuaSprite('sound_h', '', 2720, 350)
     makeGraphic('sound_h', 250, 250, '888888')
 
-    makeLuaText('iwanna', 'i would like to listen to '..needMusic, 250, 2720, 400)
+    makeLuaText('iwanna', 'change to '..needMusic..'.wav', 250, 2720, 400)
     setTextSize('iwanna', 20)
     setObjectCamera('iwanna', 'game')
     setScrollFactor('iwanna', 1, 1)
+    setTextFont('iwanna', 'tiny.ttf')
     setProperty('iwanna.antialiasing', true)
     setTextBorder('iwanna', 0)
     addLuaText('iwanna', true)
@@ -179,6 +245,7 @@ function onCreate()
     setTextSize('file', 30)
     setObjectCamera('file', 'game')
     setScrollFactor('file', 1, 1)
+    setTextFont('file', 'tiny.ttf')
     setProperty('file.antialiasing', true)
     setTextBorder('file', 0)
     addLuaText('file', true)
@@ -241,7 +308,11 @@ function onCreate()
     setScrollFactor('rat', 0, 1)
     addLuaSprite('rat')
 
-    makeLuaSprite('cheeseActive', 'hailey/cheese', 360, 1260)
+    if night ~= 6 then
+        makeLuaSprite('cheeseActive', 'hailey/cheese', 360, 1260)
+    elseif night == 6 then
+        makeLuaSprite('cheeseActive', 'hailey/fish', 360, 1260)
+    end
     setScrollFactor('cheeseActive', 0, 1)
     setProperty('cheeseActive.alpha', 1)
     addLuaSprite('cheeseActive')
@@ -327,12 +398,12 @@ function onCreate()
     makeLuaSprite('cfobj', '', 0, 300)
     makeGraphic('cfobj', 20, 20, 'FFFFFF')
 
-    runTimer('ratEat', 30 * difficulty)
-    runTimer('dieStep', getRandomInt(8, 15) * difficulty)
-    runTimer('changeSound', getRandomInt(40, 50))
+    runTimer('ratEat', 30 * fishlevel * difficulty)
+    runTimer('dieStep', getRandomInt(8, 15) * doorlevel * difficulty)
+    runTimer('changeSound', getRandomInt(40, 50) * musiclevel)
     runTimer('newTask', getRandomInt(3, 6))
     runTimer('warn', getRandomInt(15, 25) * difficulty)
-    runTimer('sayCheese', getRandomInt(23, 30) * difficulty)
+    runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
 
     runTimer('punches', getRandomInt(23, 30) * difficulty)
     runTimer('hideLaugh', getRandomInt(20, 25) * difficulty)
@@ -391,7 +462,11 @@ function onCreatePost()
     setBlendMode('sativus', 'add')
     setProperty('sativus.alpha', 0)
 
-    makeLuaSprite('cheese', 'hailey/cheese')
+    if night ~= 6 then
+        makeLuaSprite('cheese', 'hailey/cheese')
+    elseif night == 6 then
+        makeLuaSprite('cheese', 'hailey/fish')
+    end
     setObjectCamera('cheese', 'other')
     scaleObject('cheese', 0.5, 0.5)
     addLuaSprite('cheese')
@@ -411,6 +486,10 @@ function onCreatePost()
     addLuaText('night')
     setProperty('night.alpha', 0.3)
 
+    if night == 6 then
+        setTextString('night', 'Custom Night')
+    end
+
     makeLuaText('tasks', '?', 1200, 0, 50)
     setTextSize('tasks', 20)
     setTextAlignment('tasks', 'right')
@@ -421,13 +500,17 @@ function onCreatePost()
     addLuaText('tasks', true)
     setProperty('tasks.alpha', 0.3)
 
-    if night == 5 then
+    if night >= 5 then
         makeLuaSprite('difficulty', '')
-        makeGraphic('difficulty', 1281, 721, '440000')
         setObjectCamera('difficulty', 'other')
         setBlendMode('difficulty', 'multiply')
-        setProperty('difficulty.alpha', 0.6)
         addLuaSprite('difficulty', true)
+        setProperty('difficulty.alpha', 0.6)
+        if night == 5 then
+            makeGraphic('difficulty', 1290, 730, '440000')
+        elseif night == 6 then
+            makeGraphic('difficulty', 1290, 730, '113399')
+        end
     end
 
     makeLuaSprite('bs', '')
@@ -480,10 +563,12 @@ function onUpdate()
     setProperty('site.alpha', getRandomFloat(0.7, 1))
     setProperty('site_t.alpha', getProperty('site.alpha'))
 
-    if night ~= 5 then
+    if night < 5 then
         changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'normal')
     elseif night == 5 then
         changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'hard')
+    elseif night == 6 then
+        changeDiscordPresence("Hailey's Fate | Custom Harvest ", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
     end
 
     if mouseClicked('left') and canRestart then
@@ -494,7 +579,7 @@ function onUpdate()
         setProperty('camGame.x', getRandomInt(-1, 1))
     end
 
-    setTextString('iwanna', 'i want to listen to:'..needMusic)
+    setTextString('iwanna', 'change to '..needMusic..'.wav')
     setTextString('tasks', 'Tasks: '..tasks..' / '..needTasks)
     setProperty('bg.flipY', getRandomBool(50))
     setProperty('bg.flipX', getRandomBool(50))
@@ -526,28 +611,30 @@ function onUpdate()
         end
 
         setTextString('file', '< '..musicFile..'.wav >')
-        runTimer('killSound2', 4 * difficulty)
+        runTimer('killSound2', 4 * musiclevel * difficulty)
     end
 
 
     if camPos == 1 and mouseClicked('left') and not hiding and not cooldown then
-        if item == 'cheese' and getProperty('cheeseActive.alpha') == 0 then
+        if item == 'cheese' and getProperty('cheeseActive.alpha') < 1 then
             playSound('inventory', 1 * volume)
             setProperty('cheeseActive.alpha', 1)
             setProperty('cheese.alpha', 0)
             cancelTimer('ratKill')
 
             if (tasks * 100 / needTasks) <= 40 then
-                runTimer('ratEat', getRandomInt(30, 45) * difficulty)
+                runTimer('ratEat', getRandomInt(30, 45) * fishlevel * difficulty)
             elseif (tasks * 100 / needTasks) > 40 and (tasks * 100 / needTasks) <= 70 then
-                runTimer('ratEat', getRandomInt(18, 25) * difficulty)
+                runTimer('ratEat', getRandomInt(18, 25) * fishlevel * difficulty)
             elseif (tasks * 100 / needTasks) > 70 then
-                runTimer('ratEat', getRandomInt(8, 12) * difficulty)
+                runTimer('ratEat', getRandomInt(8, 12) * fishlevel * difficulty)
             end
 
             item = ''
         end
     end
+
+
 
     if mouseOverlaps('gabinet_h', 'game') and mouseClicked('left') and not hiding and not cooldown and item ~= 'cheese' then
         if cheese > 0 then
@@ -575,44 +662,44 @@ function onUpdate()
     end
 
     if mouseOverlaps('nymphaea_h', 'game') and mouseClicked('left') and not hiding and not cooldown then
-        if nymphaea == 0 then
-            nymphaea = 1
+        if nymphaea == -1 then
+            nymphaea = 10
             playSound('generator', 0.6 * volume)
             setTextString('nymphaea_t', 'Time: '..nymphaea)
             runTimer('nymphaea', 1, 10)
             playSound('nymphaea', 0.2 * volume, 'nymphaea')
-        elseif nymphaea == 10 and item ~= 'nymphaea' then
+        elseif nymphaea == 0 and item ~= 'nymphaea' then
             setTextString('nymphaea_t', '...')
-            nymphaea = 0
+            nymphaea = -1
             getItem('nymphaea')
         end
     end
 
     if mouseOverlaps('lilium_h', 'game') and mouseClicked('left') and not hiding and not cooldown then
-        if lilium == 0 then
+        if lilium == -1 then
             playSound('generator', 0.6 * volume)
-            lilium = 1
+            lilium = 15
             setTextString('lilium_t', 'Time: '..lilium)
             runTimer('lilium', 0.7, 15)
             playSound('lilium', 0.3 * volume, 'lilium')
-        elseif lilium == 15 and item ~= 'lilium' then
+        elseif lilium == 0 and item ~= 'lilium' then
             setTextString('lilium_t', '...')
-            lilium = 0
+            lilium = -1
             getItem('lilium')
         end
     end
 
     if mouseOverlaps('sativus_h', 'game') and mouseClicked('left') and not hiding and not cooldown then
-        if sativus == 0 then
+        if sativus == -1 then
             playSound('generator', 0.6 * volume)
-            sativus = 1
+            sativus = 15
             setTextString('sativus_t', 'Time: '..sativus)
 
             runTimer('sativus', 1.3, 15)
             playSound('sativus', 0.1 * volume, 'sativus')
-        elseif sativus == 15 and item ~= 'sativus' then
+        elseif sativus == 0 and item ~= 'sativus' then
             setTextString('sativus_t', '...')
-            sativus = 0
+            sativus = -1
             getItem('sativus')
         end
     end
@@ -836,7 +923,7 @@ function onTimerCompleted(tag)
 
         if night == 5 then
             runTimer('ratEat', getRandomInt(8, 12))
-            runTimer('changeSound', getRandomInt(15, 30) * difficulty)
+            runTimer('changeSound', getRandomInt(15, 30) * musiclevel * difficulty)
             runTimer('hideLaugh', getRandomInt(5, 15)) --HLTIME
             runTimer('lightLaugh', getRandomInt(10, 15)) --LLTIME
         end
@@ -855,7 +942,7 @@ function onTimerCompleted(tag)
         setProperty('soul0i.alpha', 1)
         playSound('saycheese', 0.7 * volume)
         runTimer('sayCheese1', 3)
-        runTimer('changeSound', getRandomInt(15, 30) * difficulty) --CSTIME
+        runTimer('changeSound', getRandomInt(15, 30) * musiclevel * difficulty) --CSTIME
     end
 
     if tag == 'sayCheese1' and lights then
@@ -881,7 +968,7 @@ function onTimerCompleted(tag)
     if tag == 'sayCheese2' then
          
         setProperty('soul0c.alpha', 0)
-        runTimer('sayCheese', getRandomInt(23, 30) * difficulty)
+        runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
     end
 
     if tag == 'dieStep' and soul3 then
@@ -909,7 +996,7 @@ function onTimerCompleted(tag)
             runTimer('dieCount', 2)
         end
 
-        runTimer('dieStep', getRandomInt(7, 15) * difficulty)
+        runTimer('dieStep', getRandomInt(7, 15) * doorlevel * difficulty)
     end
 
     if tag == 'soul3anim' then
@@ -953,19 +1040,19 @@ function onTimerCompleted(tag)
         setTextString('site_t', '1-A')
 
         if (tasks * 100 / needTasks) <= 40 then
-            runTimer('ratEat', getRandomInt(12, 30) * difficulty)
+            runTimer('ratEat', getRandomInt(12, 30) * fishlevel * difficulty)
 
         elseif (tasks * 100 / needTasks) > 40 and (tasks * 100 / needTasks) <= 70 then
-            runTimer('ratEat', getRandomInt(12, 25) * difficulty)
+            runTimer('ratEat', getRandomInt(12, 25) * fishlevel * difficulty)
 
         elseif (tasks * 100 / needTasks) > 70 then
-            runTimer('ratEat', getRandomInt(6, 12) * difficulty)
+            runTimer('ratEat', getRandomInt(6, 12) * fishlevel * difficulty)
         end
 
         doTweenAlpha('soul3', 'soul3', 0, 1, 'expoIn')
 
-        runTimer('sayCheese', getRandomInt(23, 30) * difficulty)
-        runTimer('changeSound', getRandomInt(15, 30) * difficulty)
+        runTimer('sayCheese', getRandomInt(23, 30) * fishlevel * difficulty)
+        runTimer('changeSound', getRandomInt(15, 30) * fishlevel * difficulty)
     end
 
     
@@ -984,7 +1071,7 @@ function onTimerCompleted(tag)
         setProperty('blackScreen.alpha', 1)
         doTweenAlpha('b', 'blackScreen', 0, 3, 'bounceInOut')
         runTimer('killSound', 8 * difficulty * ttk)
-        runTimer('sayCheese', getRandomInt(23, 30) * difficulty)
+        runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
         runTimer('punches', getRandomInt(5, 10))
     end
 
@@ -994,7 +1081,7 @@ function onTimerCompleted(tag)
 
     if tag == 'ratEat' and soul1 then
         rat = false
-        setProperty('cheeseActive.alpha', 0.05)
+        setProperty('cheeseActive.alpha', 0)
         runTimer('ratKill', 10 * ttk)
     end
 
@@ -1007,7 +1094,7 @@ function onTimerCompleted(tag)
         if musicFile ~= needMusic then
             onJumpscare('music')
         elseif musicFile == needMusic then
-            runTimer('changeSound', getRandomInt(15, 30) * difficulty)
+            runTimer('changeSound', getRandomInt(15, 30) * musiclevel * difficulty)
             runTimer('hideLaugh', getRandomInt(6, 15)) --HLTIME
             runTimer('lightLaugh', getRandomInt(10, 15)) --LLTIME
         end
@@ -1033,30 +1120,33 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'nymphaea' then
-        if nymphaea < 10 then
-            nymphaea = nymphaea + 1
+        if nymphaea > 1 then
+            nymphaea = nymphaea - 1
             setTextString('nymphaea_t', 'Time: '..nymphaea)
-        elseif nymphaea == 10 then
+        elseif nymphaea == 1 then
+            nymphaea = 0
             setTextString('nymphaea_t', 'Done')
         end
     end
 
     if tag == 'lilium' then
 
-        if lilium < 15 then
-            lilium = lilium + 1
+        if lilium > 1 then
+            lilium = lilium - 1
             setTextString('lilium_t', 'Time: '..lilium)
-        elseif lilium == 15 then
+        elseif lilium == 1 then
+            lilium = 0
             setTextString('lilium_t', 'Done')
         end
     end
 
     if tag == 'sativus' then
 
-        if sativus < 15 then
-            sativus = sativus + 1
+        if sativus > 1 then
+            sativus = sativus - 1
             setTextString('sativus_t', 'Time: '..sativus)
-        elseif sativus == 15 then
+        elseif sativus == 1 then
+            sativus = 0
             setTextString('sativus_t', 'Done')
         end
     end

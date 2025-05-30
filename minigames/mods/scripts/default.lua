@@ -1,4 +1,5 @@
 function onCreate()
+	
 	initSaveData('thwlTests')
 	luaDebugMode = true
 	luaDeprecatedWarnings = true
