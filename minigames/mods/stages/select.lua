@@ -277,17 +277,7 @@ function onUpdate()
 
 
 	if mouseOverlaps('c', 'camOther') and not starting then
-
-		if getProperty('custom.alpha') ~= 1 then
-			playSound('scrollMenu', 0.5)
-			setProperty('custom.alpha', 1)
-			setTextString('custom', "> Extra Harvest")
-		end
-
-		if mouseClicked('left') then
-		end
-	else
-		setTextString('custom', "Extra Harvest")
+		setTextString('custom', "Custom Harvest")
 		setProperty('custom.alpha', 0.6)
 	end
 
@@ -303,7 +293,7 @@ function onUpdate()
 		end
 
 		if mouseClicked('left') then
-			
+			os.exit()
 		end
 	else
 		setTextString('quit', 'Quit')

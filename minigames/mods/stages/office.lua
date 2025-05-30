@@ -267,7 +267,53 @@ function onCreate()
     setObjectCamera('camDown', 'other')
     setProperty('camDown.antialiasing', false)
     setBlendMode('camDown', 'add')
-    addLuaSprite('camDown')
+
+    
+
+    if not getDataFromSave('thwlTests', 'tutorial') then
+
+    setDataFromSave('thwlTests', 'tutorial', true) 
+
+    makeLuaText('tuto_left', 'A to look left', 140, 130, 340)
+    setTextSize('tuto_left', 24)
+    setTextAlignment('tuto_left', 'left')
+    setTextFont('tuto_left', 'ROCK.TTF')
+    setProperty('tuto_left.antialiasing', true)
+    setTextBorder('tuto_left', 0)
+    addLuaText('tuto_left', true)
+
+    makeLuaText('tuto_right', 'D to look right', 150, 950, 340)
+    setTextSize('tuto_right', 24)
+    setTextAlignment('tuto_right', 'right')
+    setTextFont('tuto_right', 'ROCK.TTF')
+    setProperty('tuto_right.antialiasing', true)
+    setTextBorder('tuto_right', 0)
+    addLuaText('tuto_right', true)
+
+    makeLuaText('tuto_down', 'Space to look down', 1280, 0, 620)
+    setTextSize('tuto_down', 24)
+    setTextFont('tuto_down', 'ROCK.TTF')
+    setProperty('tuto_down.antialiasing', true)
+    setTextBorder('tuto_down', 0)
+    addLuaText('tuto_down', true)
+
+    makeLuaText('tuto_reset', 'R to Reset', 1280, 0, 60)
+    setTextSize('tuto_reset', 24)
+    setTextFont('tuto_reset', 'ROCK.TTF')
+    setProperty('tuto_reset.antialiasing', true)
+    setTextBorder('tuto_reset', 0)
+    addLuaText('tuto_reset', true)
+
+    makeLuaText('tuto_menu', 'P to Menu', 1280, 0, 100)
+    setTextSize('tuto_menu', 24)
+    setTextFont('tuto_menu', 'ROCK.TTF')
+    setProperty('tuto_menu.antialiasing', true)
+    setTextBorder('tuto_menu', 0)
+    addLuaText('tuto_menu', true)
+
+    runTimer('tutorial', 15)
+
+    end
 
     makeLuaSprite('hiding', '', 0, 0)
     makeGraphic('hiding', 1280, 720, '000000')
@@ -435,9 +481,9 @@ function onUpdate()
     setProperty('site_t.alpha', getProperty('site.alpha'))
 
     if night ~= 5 then
-        changeDiscordPresence("Hailey's Fate | Night "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'normal')
+        changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'normal')
     elseif night == 5 then
-        changeDiscordPresence("Hailey's Fate | Night "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'hard')
+        changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'hard')
     end
 
     if mouseClicked('left') and canRestart then
@@ -448,7 +494,7 @@ function onUpdate()
         setProperty('camGame.x', getRandomInt(-1, 1))
     end
 
-    setTextString('iwanna', 'iwanna liste to !'..needMusic)
+    setTextString('iwanna', 'i want to listen to:'..needMusic)
     setTextString('tasks', 'Tasks: '..tasks..' / '..needTasks)
     setProperty('bg.flipY', getRandomBool(50))
     setProperty('bg.flipX', getRandomBool(50))
@@ -485,7 +531,7 @@ function onUpdate()
 
 
     if camPos == 1 and mouseClicked('left') and not hiding and not cooldown then
-        if item == 'cheese' and rat == false then
+        if item == 'cheese' and getProperty('cheeseActive.alpha') == 0 then
             playSound('inventory', 1 * volume)
             setProperty('cheeseActive.alpha', 1)
             setProperty('cheese.alpha', 0)
@@ -590,7 +636,7 @@ function onUpdate()
         playSound('open'..getRandomInt(1, 2), 0.3 * volume)
     end
 
-    if mouseOverlaps('camLeft', 'other') and camPos == 0 and not hiding and not cooldown then   
+    if keyboardPressed('A') and camPos == 0 and not hiding and not cooldown then   
         if getProperty('camFollow.x') > 660 then
             setProperty('camLeft.alpha', 0.05)
             setProperty('camFollow.x', getProperty('camFollow.x') - 30)
@@ -601,7 +647,7 @@ function onUpdate()
         setProperty('camLeft.alpha', 0)
     end
 
-    if mouseOverlaps('camRight', 'other') and camPos == 0 and not hiding and not cooldown then 
+    if keyboardPressed('D') and camPos == 0 and not hiding and not cooldown then 
         if getProperty('camFollow.x') < 3200 then
             setProperty('camRight.alpha', 0.05)
             setProperty('camFollow.x', getProperty('camFollow.x') + 30)
@@ -612,7 +658,7 @@ function onUpdate()
         setProperty('camRight.alpha', 0)
     end
 
-    if mouseOverlaps('camDown', 'other') and not hiding and not cooldown then
+    if keyboardJustPressed('SPACE') and not hiding and not cooldown then
 
         setProperty('camDown.alpha', 0.6)
         cameraFlash('game', 'black', 0.3, true)
@@ -678,6 +724,14 @@ end
 
 
 function onTimerCompleted(tag)
+
+    if tag == 'tutorial' then
+        removeLuaText('tuto_left')
+        removeLuaText('tuto_right')
+        removeLuaText('tuto_down')
+        removeLuaText('tuto_reset')
+        removeLuaText('tuto_menu')
+    end
 
     if tag == 'punches' and not jumpscared and ultimate then
         playSound('punchs')
