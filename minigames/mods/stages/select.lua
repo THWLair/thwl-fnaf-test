@@ -9,7 +9,7 @@ function onCreate()
 	music = 2
 	door = 2
 	camera = 2
-
+	name = getDataFromSave('thwlTests', 'username')
 
 	precacheMusic('music')
 	runTimer('music', 0.1)
@@ -53,6 +53,31 @@ function onCreate()
 	addLuaText('desc')
 	doTweenX('desc', 'desc', 150, 1, 'expoOut')
 
+	makeLuaText('name', 'Logged as '..name, 0, 200 - 30, 630)
+	setTextSize('name', 16)
+	setTextBorder('name', 0)
+	setProperty('name.alpha', 0.3)
+	setTextFont('name', 'ROCK.TTF')
+    setProperty('name.antialiasing', true)
+	setObjectCamera('name', 'other')
+	addLuaText('name')
+	doTweenX('name', 'name', 200, 2, 'expoOut')
+
+	makeLuaText('profile', 'Profile', 150, 200 - 30, 600)
+	setTextSize('profile', 20)
+	setTextBorder('profile', 0)
+	setProperty('profile.alpha', 0.6)
+	setTextFont('profile', 'ROCK.TTF')
+	setTextAlignment('profile', 'left')
+    setProperty('profile.antialiasing', true)
+	setObjectCamera('profile', 'other')
+	addLuaText('profile')
+	doTweenX('profile', 'profile', 200, 2, 'expoOut')
+
+	makeLuaSprite('p', '', 200, 595)
+	makeGraphic('p', 150, 40, '222222')
+	setObjectCamera('p', 'other')
+
 	makeLuaText('nights', '- NIGHT SELECT -', 0, 200, 270 - 30)
 	setTextSize('nights', 18)
 	setTextBorder('nights', 0)
@@ -77,6 +102,8 @@ function onCreate()
 	makeGraphic('n1', 180, 40, '222222')
 	setObjectCamera('n1', 'other')
 
+	if getDataFromSave('thwlTests', name..'-night1') == 1 then
+
 	makeLuaText('night2', 'Night 2', 0, 200, 350 - 30)
 	setTextSize('night2', 20)
 	setTextBorder('night2', 0)
@@ -90,6 +117,11 @@ function onCreate()
 	makeLuaSprite('n2', '', 200, 340)
 	makeGraphic('n2', 180, 40, '222222')
 	setObjectCamera('n2', 'other')
+
+	end
+
+
+	if getDataFromSave('thwlTests', name..'-night2') == 1 then
 
 	makeLuaText('night3', 'Night 3', 0, 200, 400 - 30)
 	setTextSize('night3', 20)
@@ -105,6 +137,10 @@ function onCreate()
 	makeGraphic('n3', 180, 40, '222222')
 	setObjectCamera('n3', 'other')
 
+	end
+
+	if getDataFromSave('thwlTests', name..'-night3') == 1 then
+
 	makeLuaText('night4', 'Night 4', 0, 200, 450 - 30)
 	setTextSize('night4', 20)
 	setTextBorder('night4', 0)
@@ -118,6 +154,10 @@ function onCreate()
 	makeLuaSprite('n4', '', 200, 440)
 	makeGraphic('n4', 180, 40, '222222')
 	setObjectCamera('n4', 'other')
+
+	end
+
+	if getDataFromSave('thwlTests', name..'-night4') == 1 then
 
 	makeLuaText('night5', 'Night 5', 0, 200, 500 - 30)
 	setTextSize('night5', 20)
@@ -133,6 +173,10 @@ function onCreate()
 	makeLuaSprite('n5', '', 200, 490)
 	makeGraphic('n5', 180, 40, '222222')
 	setObjectCamera('n5', 'other')
+
+	end
+
+	if getDataFromSave('thwlTests', name..'-night5') == 1 then
 
 	makeLuaText('survival', 'Endless Survival', 190, 900 - 40, 300 - 30)
 	setTextSize('survival', 20)
@@ -165,6 +209,8 @@ function onCreate()
 	makeLuaSprite('c1', '', 900, 345)
 	makeGraphic('c1', 150, 40, '222222')
 	setObjectCamera('c1', 'other')
+
+	end
 
 	makeLuaText('change', 'Changelog', 150, 900, 400 - 30)
 	setTextSize('change', 20)
@@ -210,6 +256,7 @@ function onCreate()
 	makeLuaSprite('q', '', 900, 495)
 	makeGraphic('q', 150, 40, '222222')
 	setObjectCamera('q', 'other')
+
 
 
 	makeLuaSprite('overlay', '')
@@ -273,7 +320,7 @@ function onCreate()
 	addLuaText('chantxt1', true)
 	setProperty('chantxt1.alpha', 0)
 
-	makeLuaText('chantxt2', "new main menu, move camera with keyboard, fixed cheese bug, now you can't put one cheese on top of another cheese, the generators now are counting down, new custom night, upper office image done, cheese eat sound, hud anims", 500, 0, 240)
+	makeLuaText('chantxt2', "new main menu, move camera with keyboard, fixed cheese bug, now you can't put one cheese on top of another cheese, the generators now are counting down, new custom night, upper office image done, cheese eat sound, hud anims, useless flashlight, new profile saves, unlockable nights, character pfp, some tvs are disabled when are useless, useless trash can, dialogues in night 5", 500, 0, 240)
 	setTextSize('chantxt2', 24)
 	setTextBorder('chantxt2', 0)
 	setTextFont('chantxt2', 'ROCK.TTF')
@@ -293,7 +340,7 @@ function onCreate()
 	addLuaText('custtxt1', true)
 	setProperty('custtxt1.alpha', 0)
 
-	makeLuaText('custtxt2', "Danger Selector", 1280, 0, 240)
+	makeLuaText('custtxt2', "Highscore: "..getDataFromSave('thwlTests', name..'-night6'), 1280, 0, 240)
 	setTextSize('custtxt2', 24)
 	setTextBorder('custtxt2', 0)
 	setTextFont('custtxt2', 'ROCK.TTF')
@@ -357,6 +404,50 @@ function onCreate()
 	setObjectCamera('sctxt', 'other')
 	addLuaText('sctxt')
 	setProperty('sctxt.alpha', 0)
+
+	makeLuaText('pfptxt1', 'PROFILE', 1280, 0, 200)
+	setTextSize('pfptxt1', 30)
+	setTextBorder('pfptxt1', 0)
+	setTextFont('pfptxt1', 'ROCKB.TTF')
+    setProperty('pfptxt1.antialiasing', true)
+	setObjectCamera('pfptxt1', 'other')
+	addLuaText('pfptxt1', true)
+	setProperty('pfptxt1.alpha', 0)
+
+	makeLuaSprite('char1', 'hailey/chars/1', 300, 300)
+	setObjectCamera('char1', 'other')
+	scaleObject('char1', 0.7, 0.7)
+	addLuaSprite('char1', true)
+	setProperty('char1.alpha', 0)
+
+	makeLuaSprite('char2', 'hailey/chars/0', 460, 300)
+	setObjectCamera('char2', 'other')
+	scaleObject('char2', 0.7, 0.7)
+	addLuaSprite('char2', true)
+	setProperty('char2.alpha', 0)
+
+	makeLuaSprite('char3', 'hailey/chars/2', 620, 300)
+	setObjectCamera('char3', 'other')
+	scaleObject('char3', 0.7, 0.7)
+	addLuaSprite('char3', true)
+	setProperty('char3.alpha', 0)
+
+	makeLuaSprite('char4', 'hailey/chars/3', 780, 300)
+	setObjectCamera('char4', 'other')
+	scaleObject('char4', 0.7, 0.7)
+	addLuaSprite('char4', true)
+	setProperty('char4.alpha', 0)
+
+	makeLuaText('pfptxt2', 'Change Profile', 1280, 0, 500)
+	setTextSize('pfptxt2', 24)
+	setTextBorder('pfptxt2', 0)
+	setTextFont('pfptxt2', 'ROCK.TTF')
+    setProperty('pfptxt2.antialiasing', true)
+	setObjectCamera('pfptxt2', 'other')
+	addLuaText('pfptxt2', true)
+	setProperty('pfptxt2.alpha', 0)
+
+
 
 
 
@@ -424,6 +515,15 @@ function onUpdate()
 	setProperty('cursor.y', getMouseY('other'))
 
 
+	if keyboardJustPressed('F12') then
+		setDataFromSave('thwlTests', name..'-night1', 1)
+		setDataFromSave('thwlTests', name..'-night2', 1)
+		setDataFromSave('thwlTests', name..'-night3', 1)
+		setDataFromSave('thwlTests', name..'-night4', 1)
+		setDataFromSave('thwlTests', name..'-night5', 1)
+		restartSong()
+	end
+
 
 	if keyboardJustPressed('F11') then
 
@@ -465,6 +565,13 @@ function onUpdate()
 				doTweenAlpha('smtxt', 'smtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sdtxt', 'sdtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sctxt', 'sctxt', 0, 0.5, 'expoOut')
+			elseif menu == 'profile' then
+				doTweenAlpha('pfp1', 'pfptxt1', 0, 0.5, 'expoOut')
+			doTweenAlpha('pfp2', 'pfptxt2', 0, 0.5, 'expoOut')
+			doTweenAlpha('char1', 'char1', 0, 0.5, 'expoOut')
+			doTweenAlpha('char2', 'char2', 0, 0.5, 'expoOut')
+			doTweenAlpha('char3', 'char3', 0, 0.5, 'expoOut')
+			doTweenAlpha('char4', 'char4', 0, 0.5, 'expoOut')
 			end
 
 			doTweenAlpha('start', 'start', 0, 0.5, 'expoOut')
@@ -506,6 +613,7 @@ function onUpdate()
 			doTweenX('s', 'start', 850, 0.5, 'expoOut')
 		end
 	end
+
 
 
 
@@ -575,6 +683,74 @@ function onUpdate()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	if menu == 'profile' and mouseOverlaps('char1', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+			setDataFromSave('thwlTests', name..'-pfp', 1)
+		end
+	end
+
+
+	if menu == 'profile' and mouseOverlaps('char2', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+			setDataFromSave('thwlTests', name..'-pfp', 0)
+		end
+	end
+
+
+	if menu == 'profile' and mouseOverlaps('char3', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+			setDataFromSave('thwlTests', name..'-pfp', 2)
+		end
+	end
+
+	if menu == 'profile' and mouseOverlaps('char4', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+			setDataFromSave('thwlTests', name..'-pfp', 3)
+		end
+	end
+
+
+	if menu == 'profile' and mouseOverlaps('pfptxt2', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			loadSong('begin')
+		end
+	end
+
+
+
+
+
+
+
+
 	if menu == '' and mouseOverlaps('n1', 'camOther') and not starting then
 
 		if getProperty('night1.alpha') ~= 1 then
@@ -597,7 +773,7 @@ function onUpdate()
 
 
 
-	if menu == '' and mouseOverlaps('n2', 'camOther') and not starting then
+	if getDataFromSave('thwlTests', name..'-night1') == 1 and menu == '' and mouseOverlaps('n2', 'camOther') and not starting then
 
 		if getProperty('night2.alpha') ~= 1 then
 			playSound('scrollMenu', 0.5)
@@ -618,7 +794,7 @@ function onUpdate()
 
 
 
-	if menu == '' and mouseOverlaps('n3', 'camOther') and not starting then
+	if getDataFromSave('thwlTests', name..'-night2') == 1 and menu == '' and mouseOverlaps('n3', 'camOther') and not starting then
 
 		if getProperty('night3.alpha') ~= 1 then
 			playSound('scrollMenu', 0.5)
@@ -641,7 +817,7 @@ function onUpdate()
 
 
 
-	if menu == '' and mouseOverlaps('n4', 'camOther') and not starting then
+	if getDataFromSave('thwlTests', name..'-night3') == 1 and menu == '' and mouseOverlaps('n4', 'camOther') and not starting then
 
 		if getProperty('night4.alpha') ~= 1 then
 			playSound('scrollMenu', 0.5)
@@ -662,7 +838,7 @@ function onUpdate()
 
 
 
-	if menu == '' and mouseOverlaps('n5', 'camOther') and not starting then
+	if getDataFromSave('thwlTests', name..'-night4') == 1 and menu == '' and mouseOverlaps('n5', 'camOther') and not starting then
 
 		if getProperty('night5.alpha') ~= 1 then
 			playSound('scrollMenu', 0.5)
@@ -685,7 +861,7 @@ function onUpdate()
 
 
 
-	if menu == '' and mouseOverlaps('c1', 'camOther') and not starting then
+	if getDataFromSave('thwlTests', name..'-night5') == 1 and menu == '' and mouseOverlaps('c1', 'camOther') and not starting then
 
 		if getProperty('custom.alpha') ~= 1 then
 			playSound('scrollMenu', 0.5)
@@ -790,6 +966,34 @@ function onUpdate()
 		setTextString('quit', 'Quit')
 		setProperty('quit.alpha', 0.6)
 		doTweenX('q1', 'quit', 900, 0.5, 'expoOut')
+	end
+
+
+
+if menu == '' and mouseOverlaps('p', 'camOther') and not starting then
+
+		if getProperty('profile.alpha') ~= 1 then
+			playSound('scrollMenu', 0.5)
+			setProperty('profile.alpha', 1)
+			setTextString('profile', 'Profile <')
+			doTweenX('p1', 'profile', 200 + 10, 0.5, 'expoOut')
+		end
+
+		if mouseClicked('left') then
+			doTweenAlpha('pfp1', 'pfptxt1', 1, 0.5, 'expoOut')
+			doTweenAlpha('pfp2', 'pfptxt2', 1, 0.5, 'expoOut')
+			doTweenAlpha('char1', 'char1', 1, 0.5, 'expoOut')
+			doTweenAlpha('char2', 'char2', 1, 0.5, 'expoOut')
+			doTweenAlpha('char3', 'char3', 1, 0.5, 'expoOut')
+			doTweenAlpha('char4', 'char4', 1, 0.5, 'expoOut')
+			doTweenAlpha('back', 'back', 1, 0.5, 'expoOut')
+			doTweenAlpha('overlay', 'overlay', 0.5, 0.5, 'expoOut')
+			menu = 'profile'
+		end
+	else
+		setTextString('profile', 'Profile')
+		setProperty('profile.alpha', 0.6)
+		doTweenX('p1', 'profile', 200, 0.5, 'expoOut')
 	end
 
 end

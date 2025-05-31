@@ -1,5 +1,6 @@
 function onCreate()
 	
+	setPropertyFromClass('Main','fpsVar.visible',false)
 	initSaveData('thwlTests')
 	luaDebugMode = true
 	luaDeprecatedWarnings = true
@@ -31,11 +32,15 @@ end
 function onUpdate()
 	changeDiscordClientID('1376276041013919806')
 
-	if keyboardJustPressed('P') then
+	if keyboardJustPressed('F1') then
 		loadSong('begin')
 	end
 
-	if keyboardJustPressed('R') then
+	if keyboardJustPressed('F2') then
+		loadSong('menu')
+	end
+
+	if keyboardJustPressed('F3') then
 		restartSong()
 	end
 end

@@ -1,6 +1,8 @@
 local shaderName = "perspective"
 
 function onCreate()
+    name = getDataFromSave('thwlTests', 'username')
+
     camPos = 0
     canCam = true
     warn = false
@@ -29,12 +31,15 @@ function onCreate()
     die = false
     win = false
 
+    flash = false
+    power = 20
     volume = 1
     lights = true
     repairing = false
 
     night = getDataFromSave('thwlTests', 'night')
 
+    alert = true
     soul1 = true
     soul2 = true
     soul3 = true
@@ -48,9 +53,10 @@ function onCreate()
     cameralevel = 1
 
     if night == 1 then
+        alert = false
         ultimate = false
         needTasks = 12
-        difficulty = 2.3
+        difficulty = 2.4
         soul2 = false
         soul3 = false
         soul0 = false
@@ -78,6 +84,10 @@ function onCreate()
         needTasks = 12
         difficulty = 0.4
         runTimer('rare', getRandomInt(100, 220))
+
+        voice = getRandomInt(1, 4)
+        precacheSound('her/voice'..voice)
+        playSound('her/voice'..voice, 0.7)
     elseif night == 6 then
         difficulty = 1
         needTasks = 16
@@ -112,7 +122,6 @@ function onCreate()
     end
     
 
-    
 
     
 
@@ -126,8 +135,16 @@ function onCreate()
     precacheMusic('office')
     precacheMusic('custom')
     precacheSound('empty')
-    playSound('empty', 0.4 * volume, 'empty', true)
-    runTimer('music')
+    precacheSound('song1')
+    precacheSound('song2')
+    precacheSound('song3')
+    precacheSound('song4')
+
+    if night ~= 5 then
+        runTimer('music')
+    else
+        runTimer('music', 2)
+    end
     setProperty('cameraSpeed', 10)
 
 	makeLuaSprite('bg', 'hailey/bg2')
@@ -178,18 +195,32 @@ function onCreate()
 
     runTimer('soul3anim', 0.3, 99999)
 
-    makeLuaSprite('site', 'hailey/site', 1670, 230)
+
+    if soul3 or ultimate then
+    makeLuaSprite('site', 'hailey/site', 1670, 242)
     setBlendMode('site', 'add')
     setProperty('site.alpha', 1)
     addLuaSprite('site')
 
-    makeLuaText('site_t', '1-A', 250, 1660, 300)
-    setTextSize('site_t', 24)
+    makeLuaText('site_t', 'RM1-A', 250, 1727, 274)
+    setTextSize('site_t', 22)
     setObjectCamera('site_t', 'game')
+    setTextFont('site_t', 'ocr.ttf')
     setProperty('site_t.antialiasing', true)
+    setTextAlignment('site_t', 'left')
     setScrollFactor('site_t', 1, 1)
     setTextBorder('site_t', 0)
     addLuaText('site_t', true)
+
+    makeLuaText('distract', 'distract', 250, 1632, 347)
+    setTextSize('distract', 22)
+    setObjectCamera('distract', 'game')
+    setTextFont('distract', 'ocr.ttf')
+    setProperty('distract.antialiasing', true)
+    setScrollFactor('distract', 1, 1)
+    setTextBorder('distract', 0)
+    addLuaText('distract', true)
+    end
 
     makeLuaSprite('warn', 'hailey/warn', 1825, 410)
     setBlendMode('warn', 'add')
@@ -239,6 +270,7 @@ function onCreate()
     makeLuaSprite('sound_h', '', 2720, 350)
     makeGraphic('sound_h', 250, 250, '888888')
 
+    if soul2 then
     makeLuaText('iwanna', 'change to '..needMusic..'.wav', 130, 2775, 370)
     setTextSize('iwanna', 20)
     setObjectCamera('iwanna', 'game')
@@ -248,6 +280,7 @@ function onCreate()
     setTextBorder('iwanna', 0)
     setProperty('iwanna.scale.x', 1.1)
     addLuaText('iwanna', true)
+    end
 
     makeLuaSprite('musicicon', 'hailey/music', 2695, 320)
     setBlendMode('musicicon', 'add')
@@ -352,7 +385,6 @@ function onCreate()
     setObjectCamera('camDown', 'other')
     setProperty('camDown.antialiasing', false)
     setBlendMode('camDown', 'add')
-
     
 
     if not getDataFromSave('thwlTests', 'tutorial') then
@@ -414,16 +446,30 @@ function onCreate()
     makeLuaSprite('cfobj', '', 0, 300)
     makeGraphic('cfobj', 20, 20, 'FFFFFF')
 
-    runTimer('ratEat', 30 * fishlevel * difficulty)
-    runTimer('dieStep', getRandomInt(8, 15) * doorlevel * difficulty)
-    runTimer('changeSound', getRandomInt(40, 50) * musiclevel)
+    if soul1 then
+        runTimer('ratEat', 30 * fishlevel * difficulty)
+    end
+
+    if soul2 then
+        runTimer('changeSound', getRandomInt(40, 50) * musiclevel)
+    end
+
+    if soul3 then
+        runTimer('dieStep', getRandomInt(8, 15) * doorlevel * difficulty)
+    end
+
+    if soul0 then
+        runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
+    end
+
     runTimer('newTask', getRandomInt(3, 6))
     runTimer('warn', getRandomInt(15, 25) * difficulty)
-    runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
-
-    runTimer('punches', getRandomInt(23, 30) * difficulty)
-    runTimer('hideLaugh', getRandomInt(20, 25) * difficulty)
-    runTimer('lightLaugh', getRandomInt(10, 20))
+    
+    if ultimate then
+        runTimer('punches', getRandomInt(23, 30) * difficulty)
+        runTimer('hideLaugh', getRandomInt(20, 25) * difficulty)
+        runTimer('lightLaugh', getRandomInt(10, 20))
+    end
 
 
     shaderCoordFix() -- initialize a fix for textureCoord when resizing game window
@@ -453,6 +499,13 @@ end
 
 
 function onCreatePost()
+
+    if night > 4 then
+        makeLuaSprite('flash', 'hailey/flash', 1000, 0)
+        setBlendMode('flash', 'add')
+        scaleObject('flash', 1.3, 1.3)
+        addLuaSprite('flash', true)
+    end
 
     setProperty('camFollow.y', 360)
     setProperty('camFollow.x', 2000)
@@ -503,8 +556,39 @@ function onCreatePost()
     setProperty('night.antialiasing', true)
     addLuaText('night')
 
+    makeLuaSprite('pfp', 'hailey/chars/'..getDataFromSave('thwlTests', name..'-pfp'), 80, 550)
+    setScrollFactor('pfp', 1, 0)
+    addLuaSprite('pfp', true)
+    scaleObject('pfp', 0.4, 0.4)
+    setProperty('pfp.alpha', 0.6)
+
+    makeLuaText('name', name, 0, 80, 600)
+    setTextSize('name', 20)
+    setTextBorder('name', 0)
+    setProperty('name.alpha', 0.6)
+    setObjectCamera('name', 'game')
+    setScrollFactor('name', 1, 0)
+    setTextFont('name', 'ROCK.TTF')
+    setProperty('name.antialiasing', true)
+    addLuaText('name')
+
+    makeLuaText('flashtxt', 'Flashlight: '..power, 0, 80, 570)
+    setTextSize('flashtxt', 20)
+    setTextBorder('flashtxt', 0)
+    setProperty('flashtxt.alpha', 0.6)
+    setObjectCamera('flashtxt', 'game')
+    setScrollFactor('flashtxt', 1, 0)
+    setTextFont('flashtxt', 'ROCK.TTF')
+    setProperty('flashtxt.antialiasing', true)
+    addLuaText('flashtxt')
+
     if night == 6 then
         setTextString('night', 'Custom Night')
+    end
+
+    if night < 5 then
+        setTextString('flashtxt', 'No Flashlight')
+        setProperty('flashtxt.alpha', 0.2)
     end
 
     makeLuaText('tasks', '?', 300, 0, 130)
@@ -551,7 +635,6 @@ function onCreatePost()
     makeGraphic('blackScreen', 1280, 720, '000000')
     setObjectCamera('blackScreen', 'other')
     addLuaSprite('blackScreen', true)
-    doTweenAlpha('b', 'blackScreen', 0, 2)
 
 
 
@@ -580,8 +663,49 @@ end
 
 function onUpdate()
 
+    if keyboardJustPressed('P') then
+        loadSong('menu')
+    end
+
+    if keyboardJustPressed('R') then
+        restartSong()
+    end
+
+    if night > 4 then
+
+        if flash then
+            doTweenX('flashx', 'flash', getProperty('camFollow.x') + getMouseX('other') - 780, 1, 'expoOut')
+            doTweenY('flashy', 'flash', getProperty('camFollow.y') + getMouseY('other') - 500, 1, 'expoOut')
+            setProperty('flash.alpha', getRandomFloat(0.3, 0.7))
+
+
+            if power >= 1 then
+                power = power - 0.006
+            elseif power < 1 then
+                flash = false
+            end
+        else
+            setProperty('flash.alpha', 0)
+        end
+
+        setTextString('flashtxt', 'Flashlight: '..math.floor(power))
+    end
+
+    if keyboardJustPressed('SHIFT') and power >= 1 and night > 4 then
+        stopSound('flash')
+        playSound('flash', 0.4, 'flash')
+        if flash then
+            flash = false
+        else
+            flash = true
+        end
+    end
+
+    doTweenX('name', 'name', getProperty('camFollow.x') - 460, 0.6, 'expoOut')
+    doTweenX('pfp', 'pfp', getProperty('camFollow.x') - 550, 0.6, 'expoOut')
     doTweenX('night', 'night', getProperty('camFollow.x') - 550, 0.6, 'expoOut')
     doTweenX('tasks', 'tasks', getProperty('camFollow.x') - 550, 0.6, 'expoOut')
+    doTweenX('flashtxt', 'flashtxt', getProperty('camFollow.x') - 460, 0.6, 'expoOut')
 
     setShaderFloat("perspective", "iTime", os.clock())
 
@@ -700,6 +824,8 @@ function onUpdate()
         setProperty('file.x', 2720 + 10)
         doTweenX('filex', 'file', 2720, 0.5, 'expoOut')
         runTimer('killSound2', 4 * musiclevel * difficulty)
+        stopSound('musicFile')
+        playSound('song'..musicFile, 0.3, 'musicFile', true)
     end
 
 
@@ -1015,6 +1141,7 @@ function onTimerCompleted(tag)
         setTextString('lightreset', 'disconnect services')
         playSound('lights')
         doTweenAlpha('bs', 'bs', 0, 1, 'bounceOut')
+        setSoundVolume('musicFile', 0.3)
 
         if night == 5 then
             runTimer('ratEat', getRandomInt(8, 12))
@@ -1073,17 +1200,17 @@ function onTimerCompleted(tag)
             
 
             if soulPos == 1 then
-                setTextString('site_t', '1-A')
+                setTextString('site_t', 'RM1-A')
             elseif soulPos == 2 then
-                setTextString('site_t', '2-A')
+                setTextString('site_t', 'RM2-A')
             elseif soulPos == 3 then
-                setTextString('site_t', '1-B')
+                setTextString('site_t', 'RM1-F')
             elseif soulPos == 4 then
-                setTextString('site_t', '2-B')
+                setTextString('site_t', 'RM2-F')
             elseif soulPos == 5 then
-                setTextString('site_t', '1-C')
+                setTextString('site_t', 'RM1-Z')
             elseif soulPos == 6 then
-                setTextString('site_t', '2-C')
+                setTextString('site_t', 'RM2-Z')
             end
 
 
@@ -1103,7 +1230,24 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'endGame' then
-        loadSong('begin')
+
+        if night ~= 6 then
+            setDataFromSave('thwlTests', name..'-night'..night, 1)
+        elseif night == 6 then
+            minusFish = fishlevel * 100
+            minusMusic = musiclevel * 100
+            minusDoor = doorlevel * 100
+            minusCamera = cameralevel * 100
+            minusWarn = 0
+
+            totalScore = 800 - minusFish - minusMusic - minusDoor - minusCamera - minusWarn
+
+            if totalScore > getDataFromSave('thwlTests', 'night6') then
+                setDataFromSave('thwlTests', 'night6', totalScore)
+            end
+        end
+
+        loadSong('menu')
     end
 
     if tag == 'rare' then
@@ -1132,7 +1276,7 @@ function onTimerCompleted(tag)
 
         playSound('')
         soulPos = 1
-        setTextString('site_t', '1-A')
+        setTextString('site_t', 'RM1-A')
 
         if (tasks * 100 / needTasks) <= 40 then
             runTimer('ratEat', getRandomInt(12, 30) * fishlevel * difficulty)
@@ -1160,6 +1304,7 @@ function onTimerCompleted(tag)
         cancelTimer('lightLaugh')
         cancelTimer('punches')
 
+        setSoundVolume('musicFile', 0)
         playSound('lightsdown', 0.1)
 
         needMusic = getRandomInt(1, 4, musicFile)
@@ -1251,7 +1396,7 @@ function onTimerCompleted(tag)
         cooldown = false
     end
 
-    if tag == 'warn' then
+    if tag == 'warn' and alert then
         playSound('warn', 0.8 * volume, 'warn')
         setProperty('warn.alpha', 1)
         doTweenAlpha('warn', 'warn', 0, 0.15, 'bounceInOut')
@@ -1269,11 +1414,11 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'music' then
-
-        if night ~= 5 then
-            playMusic('office', 0.2 * volume, true)
-        elseif night == 5 then
-            playMusic('custom', 0.2 * volume, true)
+        playSound('empty', 0.4 * volume, 'empty', true)
+        doTweenAlpha('b', 'blackScreen', 0, 2)
+        playSound('song1', 0.3, 'musicFile', true)
+        if night > 4 then
+            playMusic('custom', 0.15 * volume, true)
         end
     end
 
@@ -1437,6 +1582,7 @@ function checkItems()
             cancelTimer('killSound')
             cancelTimer('killSound2')
             stopSound('empty')
+            stopSound('musicFile')
             stopSound(_)
             cooldown = true
 
@@ -1471,6 +1617,7 @@ function onJumpscare(who)
     soul0 = false
 
     jumpscared = true
+    setSoundVolume('musicFile', 0)
     runTimer('canRestart', 4)
     cancelTimer('dieCount')
     cancelTimer('dieKill1')
@@ -1543,6 +1690,7 @@ end
 function lightsDown()
     volume = 0
     lights = false
+    setSoundVolume('musicFile', 0)
     stopSound('sativus')
     stopSound('lilium')
     stopSound('nymphaea')
