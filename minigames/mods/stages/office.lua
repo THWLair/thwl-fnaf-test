@@ -34,7 +34,7 @@ function onCreate()
     flash = false
     power = 20
     volume = 1
-    musicfilevolume = 1
+    filevolume = 1
     lights = true
     repairing = false
     distractCd = true
@@ -86,7 +86,7 @@ function onCreate()
         needTasks = 12
         difficulty = 0.4
         runTimer('rare', getRandomInt(100, 220))
-
+        filevolume = 0
         voice = getRandomInt(1, 4)
         precacheSound('her/voice'..voice)
         playSound('her/voice'..voice, 0.7)
@@ -99,7 +99,7 @@ function onCreate()
         soul2 = false
         soul3 = false
         ultimate = false
-
+        filevolume = 0
         fishlevel = getDataFromSave('thwlTests', 'fishlevel')
         musiclevel = getDataFromSave('thwlTests', 'musiclevel')
         doorlevel = getDataFromSave('thwlTests', 'doorlevel')
@@ -853,12 +853,18 @@ function onUpdate()
     end
 
 
-    if mouseOverlaps('site', 'game') and mouseClicked('left') and not hiding and not cooldown and camPos == 0 and distractCd then
+
+
+    if soul3 and mouseOverlaps('site', 'game') and mouseClicked('left') and not hiding and not cooldown then
+        if distractCd then
         playSound('tv', 0.5)
+        playSound('taunt', 0.5)
         distractCd = false
-        soulPos = soulPos - 1
+        soulPos = soulPos - 3
         runTimer('distractCd', 20)
+        setTextString('site_t', 'RM?-?')
         setTextString('distract', 'wait...')
+        end
     end
 
 
@@ -1160,7 +1166,7 @@ function onTimerCompleted(tag)
         setTextString('lightreset', 'disconnect services')
         playSound('lights')
         doTweenAlpha('bs', 'bs', 0, 1, 'bounceOut')
-        setSoundVolume('musicFile', 0.3 * musicfilevolume)
+        setSoundVolume('musicFile', 0.3 * filevolume)
 
         if night == 5 then
             runTimer('ratEat', getRandomInt(8, 12))
@@ -1435,7 +1441,7 @@ function onTimerCompleted(tag)
     if tag == 'music' then
         playSound('empty', 0.4 * volume, 'empty', true)
         doTweenAlpha('b', 'blackScreen', 0, 2)
-        playSound('song1', 0.3 * musicfilevolume, 'musicFile', true)
+        playSound('song1', 0.3 * filevolume, 'musicFile', true)
         if night > 4 then
             playMusic('custom', 0.15 * volume, true)
         end
