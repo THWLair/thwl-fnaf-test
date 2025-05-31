@@ -34,8 +34,10 @@ function onCreate()
     flash = false
     power = 20
     volume = 1
+    musicfilevolume = 1
     lights = true
     repairing = false
+    distractCd = true
 
     night = getDataFromSave('thwlTests', 'night')
 
@@ -212,8 +214,8 @@ function onCreate()
     setTextBorder('site_t', 0)
     addLuaText('site_t', true)
 
-    makeLuaText('distract', 'distract', 250, 1632, 347)
-    setTextSize('distract', 22)
+    makeLuaText('distract', 'distract', 230, 1632, 347)
+    setTextSize('distract', 20)
     setObjectCamera('distract', 'game')
     setTextFont('distract', 'ocr.ttf')
     setProperty('distract.antialiasing', true)
@@ -263,6 +265,8 @@ function onCreate()
         doTweenX('fog1', 'fog1', -4000, 70)
         doTweenX('fog2', 'fog2', 0, 70)
     end
+
+
 
     makeLuaSprite('hide_h', '', 3200, 50)
     makeGraphic('hide_h', 520, 520, '888888')
@@ -849,6 +853,14 @@ function onUpdate()
     end
 
 
+    if mouseOverlaps('site', 'game') and mouseClicked('left') and not hiding and not cooldown and camPos == 0 and distractCd then
+        playSound('tv', 0.5)
+        distractCd = false
+        soulPos = soulPos - 1
+        runTimer('distractCd', 20)
+        setTextString('distract', 'wait...')
+    end
+
 
     if mouseOverlaps('gabinet_h', 'game') and mouseClicked('left') and not hiding and not cooldown and item ~= 'cheese' then
         if cheese > 0 then
@@ -868,7 +880,8 @@ function onUpdate()
         runTimer('warn', getRandomInt(20, 35) * difficulty)
     end
 
-    if mouseOverlaps('hide_h', 'game') and mouseClicked('left') and not hiding and not cooldown then
+    if mouseOverlaps('hide_h', 'game') and mouseClicked('left') and not hiding and not cooldown and camPos == 0 then
+        camPos = 0
         doTweenAlpha('hiding1', 'hiding', 1, 0.5)
         cooldown = true
         runTimer('cooldown', 1)
@@ -962,14 +975,15 @@ function onUpdate()
     if keyboardJustPressed('SPACE') and not hiding and not cooldown then
 
         setProperty('camDown.alpha', 0.6)
-        cameraFlash('game', 'black', 0.3, true)
         if camPos == 0 and canCam then
+            cameraFlash('game', 'black', 0.3, true)
             canCam = false
             doTweenY('camFollow', 'camFollow', 360 + 720, 0.4, 'expoOut')
             camPos = 1
             runTimer('canCam', 0.41)
             playSound('move', 1)
         elseif camPos == 1 and canCam then
+            cameraFlash('game', 'black', 0.3, true)
             canCam = false
             doTweenY('camFollow', 'camFollow', 360, 0.4, 'expoOut')
             camPos = 0
@@ -1031,6 +1045,11 @@ end
 
 
 function onTimerCompleted(tag)
+
+    if tag == 'distractCd' then
+        distractCd = true
+        setTextString('distract', 'distract')
+    end
 
     if tag == 'tutorial' then
         tutorial = false
@@ -1141,7 +1160,7 @@ function onTimerCompleted(tag)
         setTextString('lightreset', 'disconnect services')
         playSound('lights')
         doTweenAlpha('bs', 'bs', 0, 1, 'bounceOut')
-        setSoundVolume('musicFile', 0.3)
+        setSoundVolume('musicFile', 0.3 * musicfilevolume)
 
         if night == 5 then
             runTimer('ratEat', getRandomInt(8, 12))
@@ -1416,7 +1435,7 @@ function onTimerCompleted(tag)
     if tag == 'music' then
         playSound('empty', 0.4 * volume, 'empty', true)
         doTweenAlpha('b', 'blackScreen', 0, 2)
-        playSound('song1', 0.3, 'musicFile', true)
+        playSound('song1', 0.3 * musicfilevolume, 'musicFile', true)
         if night > 4 then
             playMusic('custom', 0.15 * volume, true)
         end
