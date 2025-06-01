@@ -48,7 +48,7 @@ function onCreate()
     soul3 = true -- closet thing
     soul0 = true -- camera girl
     ultimate = true
-    ultiDiff = 0.6
+    ultiDiff = 0.7
 
     altalert = false
     soul4 = false -- mini ghost
@@ -63,7 +63,6 @@ function onCreate()
     cameralevel = 1
     ghostlevel = 1
     catlevel = 1
-    
 
 
     if night == 1 then
@@ -156,7 +155,7 @@ function onCreate()
     
 
     jumpscared = false
-
+    totalScore = 1500 - ((alertlevel * 125) + (fishlevel * 125) + (musiclevel * 125) + (doorlevel * 125) + (cameralevel * 125) + (catlevel * 125))
 
 
 
@@ -629,7 +628,7 @@ function onCreatePost()
     addLuaText('flashtxt')
 
     if night == 6 then
-        setTextString('night', 'Custom Night')
+        setTextString('night', 'Custom Night: '..totalScore..'P')
     end
 
     if night < 5 then
@@ -793,7 +792,7 @@ function onUpdate()
     elseif night == 5 then
         changeDiscordPresence("Hailey's Fate | Harvest "..night, 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'hard')
     elseif night == 6 then
-        changeDiscordPresence("Hailey's Fate | Custom Harvest", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
+        changeDiscordPresence("Hailey's Fate | Custom Harvest: "..totalScore.."P", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
     end
 
     if night == 5 and lights then
@@ -1297,17 +1296,7 @@ function onTimerCompleted(tag)
         if night ~= 6 then
             setDataFromSave('thwlTests', name..'-night'..night, 1)
             flushSaveData('thwlTests')
-        elseif night == 6 then
-            minusWarn = 0
-            minusFish = fishlevel * 100
-            minusMusic = musiclevel * 100
-            minusDoor = doorlevel * 100
-            minusCamera = cameralevel * 100
-            minusCat = catlevel * 100
-            minusWarn2 = alertlevel * 100
-            
-
-            totalScore = 1100 - minusFish - minusMusic - minusDoor - minusCamera - minusWarn
+        elseif night == 6 then   
 
             if totalScore > getDataFromSave('thwlTests', name..'-night6') then
                 setDataFromSave('thwlTests', name..'-night6', totalScore)

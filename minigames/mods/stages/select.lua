@@ -369,6 +369,26 @@ function onCreate()
 	addLuaText('custtxt2', true)
 	setProperty('custtxt2.alpha', 0)
 
+	makeLuaText('custtxt3', "", 1280, 0, 550)
+	setTextSize('custtxt3', 24)
+	setTextBorder('custtxt3', 0)
+	setTextFont('custtxt3', 'ROCK.TTF')
+    setProperty('custtxt3.antialiasing', true)
+	setObjectCamera('custtxt3', 'other')
+	addLuaText('custtxt3', true)
+	setProperty('custtxt3.alpha', 0)
+
+	makeLuaText('custtxt4', "Left Click + | Right Click -", 1280, 0, 520)
+	setTextSize('custtxt4', 16)
+	setTextBorder('custtxt4', 0)
+	setTextColor('custtxt4', '606060')
+	setTextFont('custtxt4', 'ROCC.TTF')
+	setBlendMode('custtxt4', 'add')
+    setProperty('custtxt4.antialiasing', true)
+	setObjectCamera('custtxt4', 'other')
+	addLuaText('custtxt4', true)
+	setProperty('custtxt4.alpha', 0)
+
 	makeLuaSprite('selectalert', 'hailey/selectalert', 140, 300)
 	setObjectCamera('selectalert', 'other')
 	scaleObject('selectalert', 0.7, 0.7)
@@ -383,7 +403,7 @@ function onCreate()
 	addLuaText('satxt')
 	setProperty('satxt.alpha', 0)
 
-	makeLuaSprite('selectfish', 'hailey/selectfish', 300, 300)
+	makeLuaSprite('selectfish', 'hailey/selectfish', 305, 300)
 	setObjectCamera('selectfish', 'other')
 	scaleObject('selectfish', 0.7, 0.7)
 	addLuaSprite('selectfish', true)
@@ -397,7 +417,7 @@ function onCreate()
 	addLuaText('sftxt')
 	setProperty('sftxt.alpha', 0)
 
-	makeLuaSprite('selectmusic', 'hailey/selectmusic', 460, 300)
+	makeLuaSprite('selectmusic', 'hailey/selectmusic', 470, 300)
 	setObjectCamera('selectmusic', 'other')
 	scaleObject('selectmusic', 0.7, 0.7)
 	addLuaSprite('selectmusic', true)
@@ -411,7 +431,7 @@ function onCreate()
 	addLuaText('smtxt')
 	setProperty('smtxt.alpha', 0)
 
-	makeLuaSprite('selectdoor', 'hailey/selectdoor', 620, 300)
+	makeLuaSprite('selectdoor', 'hailey/selectdoor', 635, 300)
 	setObjectCamera('selectdoor', 'other')
 	scaleObject('selectdoor', 0.7, 0.7)
 	addLuaSprite('selectdoor', true)
@@ -425,7 +445,7 @@ function onCreate()
 	addLuaText('sdtxt')
 	setProperty('sdtxt.alpha', 0)
 
-	makeLuaSprite('selectcamera', 'hailey/selectcamera', 780, 300)
+	makeLuaSprite('selectcamera', 'hailey/selectcamera', 800, 300)
 	setObjectCamera('selectcamera', 'other')
 	scaleObject('selectcamera', 0.7, 0.7)
 	addLuaSprite('selectcamera', true)
@@ -439,7 +459,7 @@ function onCreate()
 	addLuaText('sctxt')
 	setProperty('sctxt.alpha', 0)
 
-	makeLuaSprite('selectcat', 'hailey/selectcat', 940, 300)
+	makeLuaSprite('selectcat', 'hailey/selectcat', 965, 300)
 	setObjectCamera('selectcat', 'other')
 	scaleObject('selectcat', 0.7, 0.7)
 	addLuaSprite('selectcat', true)
@@ -607,6 +627,8 @@ function onUpdate()
 			elseif menu == 'custom' then
 				doTweenAlpha('cust1', 'custtxt1', 0, 0.5, 'expoOut')
 				doTweenAlpha('cust2', 'custtxt2', 0, 0.5, 'expoOut')
+				doTweenAlpha('cust3', 'custtxt3', 0, 0.5, 'expoOut')
+				doTweenAlpha('cust4', 'custtxt4', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectalert', 'selectalert', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectfish', 'selectfish', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectmusic', 'selectmusic', 0, 0.5, 'expoOut')
@@ -618,7 +640,7 @@ function onUpdate()
 				doTweenAlpha('smtxt', 'smtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sdtxt', 'sdtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sctxt', 'sctxt', 0, 0.5, 'expoOut')
-				doTweenAlpha('sctxt2', 'sctxt', 0, 0.5, 'expoOut')
+				doTweenAlpha('sctxt2', 'sctxt2', 0, 0.5, 'expoOut')
 			elseif menu == 'profile' then
 				doTweenAlpha('pfp1', 'pfptxt1', 0, 0.5, 'expoOut')
 			doTweenAlpha('pfp2', 'pfptxt2', 0, 0.5, 'expoOut')
@@ -674,22 +696,20 @@ function onUpdate()
 
 	if menu == 'custom' and mouseOverlaps('selectalert', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
 
-			if alert == 0.4 then
-				alert = 2
-			elseif alert > 0.4 then
+			if alert > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				alert = alert - 0.1
 			end
 
 			setTextString('satxt', 'Level '..(20 - (alert * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+		elseif mousePressed('right') then
 
-			if alert == 2 then
-				alert = 0.4
-			elseif alert < 2 then
+			if alert < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				alert = alert + 0.1
 			end
 
@@ -700,49 +720,46 @@ function onUpdate()
 
 	if menu == 'custom' and mouseOverlaps('selectfish', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
 
-			if fish == 0.4 then
-				fish = 2
-			elseif alert > 0.4 then
+			if fish > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				fish = fish - 0.1
 			end
 
-			setTextString('sftxt', 'Level '..(20 - (fish * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+			setTextString('sftxt', 'Level '..string.format("%.0f", (20 - (fish * 10))))
 
-			if fish == 2 then
-				fish = 0.4
-			elseif fish < 2 then
+		elseif mousePressed('right') then
+
+			if fish < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				fish = fish + 0.1
 			end
 
-			setTextString('sftxt', 'Level '..(20 - (fish * 10)))
+			setTextString('sftxt', 'Level '..string.format("%.0f", (20 - (fish * 10))))
 		end
 	end
 
 
 	if menu == 'custom' and mouseOverlaps('selectmusic', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
 
-			if music == 0.4 then
-				music = 2
-			elseif music > 0.4 then
+			if music > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				music = music - 0.1
 			end
 
 			setTextString('smtxt', 'Level '..(20 - (music * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+		elseif mousePressed('right') then
 
-			if music == 2 then
-				music = 0.4
-			elseif music < 2 then
-				music = fish + 0.1
+			if music < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
+				music = music + 0.1
 			end
 
 			setTextString('smtxt', 'Level '..(20 - (music * 10)))
@@ -752,23 +769,21 @@ function onUpdate()
 
 	if menu == 'custom' and mouseOverlaps('selectdoor', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
 
-			if door == 0.4 then
-				door = 2
-			elseif door > 0.4 then
+			if door > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				door = door - 0.1
 			end
 
 			setTextString('sdtxt', 'Level '..(20 - (door * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+		elseif mousePressed('right') then
 
-			if door == 2 then
-				door = 0.4
-			elseif door < 2 then
-				door = fish + 0.1
+			if door < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
+				door = door + 0.1
 			end
 
 			setTextString('sdtxt', 'Level '..(20 - (door * 10)))
@@ -777,22 +792,20 @@ function onUpdate()
 
 	if menu == 'custom' and mouseOverlaps('selectcamera', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
 
-			if camera == 0.4 then
-				camera = 2
-			elseif camera > 0.4 then
+			if camera > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				camera = camera - 0.1
 			end
 
 			setTextString('sctxt', 'Level '..(20 - (camera * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+		elseif mousePressed('right') then
 
-			if camera == 2 then
-				camera = 0.4
-			elseif camera < 2 then
+			if camera < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				camera = camera + 0.1
 			end
 
@@ -802,22 +815,21 @@ function onUpdate()
 
 	if menu == 'custom' and mouseOverlaps('selectcat', 'camOther') and not starting then
 
-		if mouseClicked('left') then
-			playSound('tick')
+		if mousePressed('left') then
+			
 
-			if cat == 0.4 then
-				cat = 2
-			elseif cat > 0.4 then
+			if cat > 0.4 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				cat = cat - 0.1
 			end
 
 			setTextString('sctxt2', 'Level '..(20 - (cat * 10)))
-		elseif mouseClicked('right') then
-			playSound('tick')
+		elseif mousePressed('right') then
 
-			if cat == 2 then
-				cat = 0.4
-			elseif cat < 2 then
+			if cat < 2 then
+				stopSound('gone')
+				playSound('gone', 0.4, 'gone')
 				cat = cat + 0.1
 			end
 
@@ -825,6 +837,9 @@ function onUpdate()
 		end
 	end
 
+    
+    totalScore = 1500 - ((alert * 125) + (fish * 125) + (music * 125) + (door * 125) + (camera * 125) + (cat * 125))
+   	setTextString('custtxt3', 'Score: '..string.format("%.0f", totalScore))
 
 
 
@@ -1023,6 +1038,8 @@ function onUpdate()
 		if mouseClicked('left') then
 			doTweenAlpha('cust1', 'custtxt1', 1, 0.5, 'expoOut')
 			doTweenAlpha('cust2', 'custtxt2', 1, 0.5, 'expoOut')
+			doTweenAlpha('cust3', 'custtxt3', 1, 0.5, 'expoOut')
+			doTweenAlpha('cust4', 'custtxt4', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectalert', 'selectalert', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectfish', 'selectfish', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectmusic', 'selectmusic', 1, 0.5, 'expoOut')
