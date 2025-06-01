@@ -810,34 +810,13 @@ function onUpdate()
     doTweenX('helpx', 'help', getMouseX('other') + 20, 0.5, 'expoOut')
     doTweenY('helpy', 'help', getMouseY('other'), 0.5, 'expoOut')
 
-    if tutorial then
-
-    if mouseOverlaps('sound_h', 'game') then
-        setTextString('help', "If the lights go out momentarily, switch to the required song")
-    elseif mouseOverlaps('gabinet_h', 'game') then
-        setTextString('help', "If there isn't a piece of cheese below, take it from here and put it there")
-    elseif mouseOverlaps('hide_h', 'game') then
-        setTextString('help', "If you hear a whisper, hide here")
-    elseif mouseOverlaps('warn_h', 'game') then
-        setTextString('help', "Turn this thing off when it turns on")
-    elseif mouseOverlaps('asis_h', 'game') then
-        setTextString('help', "You can turn the lights on or off with this")
-    elseif mouseOverlaps('site', 'game') then
-        setTextString('help', "Location of Demon 3, use this to distract him")
-    elseif mouseOverlaps('lilium_h', 'game') then
+    if mouseOverlaps('lilium_h', 'game') then
         setTextString('help', "Lilium Generator (7,5s)")
     elseif mouseOverlaps('nymphaea_h', 'game') then
         setTextString('help', "Nymphaea Generator (10s)")
     elseif mouseOverlaps('sativus_h', 'game') then
         setTextString('help', "Sativus Generator (19,5s)")
-    end
-
-    end
-
-
-
-
-    if needItem1 ~= '' and mouseOverlaps('needItem1', 'game') then
+    elseif needItem1 ~= '' and mouseOverlaps('needItem1', 'game') then
         setTextString('help', "Need <"..needItem1.."> material.")
     elseif needItem2 ~= '' and mouseOverlaps('needItem2', 'game') then
         setTextString('help', "Need <"..needItem2.."> material.")
