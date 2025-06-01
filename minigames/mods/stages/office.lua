@@ -48,10 +48,11 @@ function onCreate()
     soul3 = true -- closet thing
     soul0 = true -- camera girl
     ultimate = true
-    ultiDiff = 0.4
+    ultiDiff = 0.6
 
+    altalert = false
     soul4 = false -- mini ghost
-    soul5 = true -- cat
+    soul5 = false -- cat
     cathp = 0
     ttk = 1
 
@@ -89,6 +90,7 @@ function onCreate()
     elseif night == 4 then
         ultimate = false
         needTasks = 12
+        doorlevel = 0.6
         difficulty = 0.8
         runTimer('rare', getRandomInt(120, 220))
     elseif night == 5 then
@@ -123,6 +125,7 @@ function onCreate()
         catlevel = getDataFromSave('thwlTests', 'catlevel')
 
         if alertlevel < 2 then
+            altalert = true
             alert = true
         end
 
@@ -1467,7 +1470,7 @@ function onTimerCompleted(tag)
 
     if tag == 'warn' and alert then
         if not warn and not warn2 then
-            if not getRandomBool(100) then
+            if not altalert then
                 playSound('warn', 0.8 * volume, 'warn')
                 setProperty('warn.alpha', 1)
                 doTweenAlpha('warn', 'warn', 0, 0.15, 'bounceInOut')
