@@ -6,6 +6,7 @@ function onCreate()
     camPos = 0
     canCam = true
     warn = false
+    warn2 = false
     hiding = false
     cooldown = false
 
@@ -41,18 +42,28 @@ function onCreate()
 
     night = getDataFromSave('thwlTests', 'night')
 
-    alert = true
-    soul1 = true
-    soul2 = true
-    soul3 = true
-    soul0 = true
+    alert = true -- warn
+    soul1 = true -- cheese/fish
+    soul2 = true -- song
+    soul3 = true -- closet thing
+    soul0 = true -- camera girl
     ultimate = true
+    ultiDiff = 0.4
+
+    soul4 = false -- mini ghost
+    soul5 = true -- cat
+    cathp = 0
     ttk = 1
 
+    alertlevel = 1
     fishlevel = 1
     musiclevel = 1
     doorlevel = 1
     cameralevel = 1
+    ghostlevel = 1
+    catlevel = 1
+    
+
 
     if night == 1 then
         alert = false
@@ -78,13 +89,13 @@ function onCreate()
     elseif night == 4 then
         ultimate = false
         needTasks = 12
-        difficulty = 0.9
+        difficulty = 0.8
         runTimer('rare', getRandomInt(120, 220))
     elseif night == 5 then
         soul3 = false
         ttk = 1.5
         needTasks = 12
-        difficulty = 0.4
+        difficulty = 0.5
         runTimer('rare', getRandomInt(100, 220))
         filevolume = 0
         voice = getRandomInt(1, 4)
@@ -94,16 +105,26 @@ function onCreate()
         difficulty = 1
         needTasks = 16
         
+        alert = false
         soul0 = false
         soul1 = false
         soul2 = false
         soul3 = false
+        soul5 = false
         ultimate = false
         filevolume = 0
+
+
+        alertlevel = getDataFromSave('thwlTests', 'alertlevel')
         fishlevel = getDataFromSave('thwlTests', 'fishlevel')
         musiclevel = getDataFromSave('thwlTests', 'musiclevel')
         doorlevel = getDataFromSave('thwlTests', 'doorlevel')
         cameralevel = getDataFromSave('thwlTests', 'cameralevel')
+        catlevel = getDataFromSave('thwlTests', 'catlevel')
+
+        if alertlevel < 2 then
+            alert = true
+        end
 
         if fishlevel < 2 then
             soul1 = true
@@ -121,6 +142,10 @@ function onCreate()
             soul0 = true
         end
 
+        if catlevel < 2 then
+            soul5 = true
+        end
+
     end
     
 
@@ -128,7 +153,6 @@ function onCreate()
     
 
     jumpscared = false
-    canRestart = false
 
 
 
@@ -195,10 +219,18 @@ function onCreate()
     setProperty('soul3.alpha', 0)
     addLuaSprite('soul3')
 
+    makeLuaSprite('soul5', 'hailey/soul5', 2200, 90)
+    setBlendMode('soul5', 'add')
+    setProperty('soul5.alpha', 0.4)
+    scaleObject('soul5', 0.8, 0.8)
+    if soul5 then
+        addLuaSprite('soul5')
+    end
+
     runTimer('soul3anim', 0.3, 99999)
 
 
-    if soul3 or ultimate then
+    if soul3 then
     makeLuaSprite('site', 'hailey/site', 1670, 242)
     setBlendMode('site', 'add')
     setProperty('site.alpha', 1)
@@ -228,6 +260,11 @@ function onCreate()
     setBlendMode('warn', 'add')
     setProperty('warn.alpha', 0)
     addLuaSprite('warn')
+
+    makeLuaSprite('warn2', 'hailey/warn2', 1825, 410)
+    setBlendMode('warn2', 'add')
+    setProperty('warn2.alpha', 0)
+    addLuaSprite('warn2')
 
 
     if night < 5 then
@@ -391,9 +428,9 @@ function onCreate()
     setBlendMode('camDown', 'add')
     
 
-    if not getDataFromSave('thwlTests', 'tutorial') then
+    if not getDataFromSave('thwlTests', name..'tutorial') then
 
-    setDataFromSave('thwlTests', 'tutorial', true) 
+    setDataFromSave('thwlTests', name..'tutorial', true) 
 
     tutorial = true
 
@@ -466,13 +503,15 @@ function onCreate()
         runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
     end
 
+    if soul5 then
+        runTimer('catAppear', getRandomInt(16, 36) * catlevel)
+    end
+
     runTimer('newTask', getRandomInt(3, 6))
     runTimer('warn', getRandomInt(15, 25) * difficulty)
     
     if ultimate then
-        runTimer('punches', getRandomInt(23, 30) * difficulty)
-        runTimer('hideLaugh', getRandomInt(20, 25) * difficulty)
-        runTimer('lightLaugh', getRandomInt(10, 20))
+        runTimer('punches', 7)
     end
 
 
@@ -667,12 +706,27 @@ end
 
 function onUpdate()
 
+
     if keyboardJustPressed('P') then
         loadSong('menu')
     end
 
     if keyboardJustPressed('R') then
         restartSong()
+    end
+
+
+    if soul5 then
+        setProperty('soul5.y', 90 + getRandomFloat(-3, 3))
+        setProperty('soul5.x', 2200 + getRandomFloat(-3, 3))
+
+        if mouseOverlaps('soul5', 'game') and flash then
+            if cathp == 0.5 then
+                cancelTimer('catKill')
+                playSound('gone')
+            end
+            cathp = cathp - 0.5
+        end
     end
 
     if night > 4 then
@@ -694,6 +748,11 @@ function onUpdate()
 
         setTextString('flashtxt', 'Flashlight: '..math.floor(power))
     end
+
+    if soul5 then
+        setProperty('soul5.alpha', (cathp * 0.5) / 30)
+    end
+
 
     if keyboardJustPressed('SHIFT') and power >= 1 and night > 4 then
         stopSound('flash')
@@ -734,10 +793,6 @@ function onUpdate()
         changeDiscordPresence("Hailey's Fate | Custom Harvest", 'Tasks: '..tasks..'/'..needTasks, '', true, 0, 'custom')
     end
 
-    if mouseClicked('left') and canRestart then
-        restartSong()
-    end
-
     if night == 5 and lights then
         setProperty('camGame.x', getRandomInt(-1, 1))
     end
@@ -768,9 +823,9 @@ function onUpdate()
     elseif mouseOverlaps('asis_h', 'game') then
         setTextString('help', "You can turn the lights on or off with this")
     elseif mouseOverlaps('site', 'game') then
-        setTextString('help', "Location of Demon 3")
+        setTextString('help', "Location of Demon 3, use this to distract him")
     elseif mouseOverlaps('lilium_h', 'game') then
-        setTextString('help', "Lilium Generator (10,5s)")
+        setTextString('help', "Lilium Generator (7,5s)")
     elseif mouseOverlaps('nymphaea_h', 'game') then
         setTextString('help', "Nymphaea Generator (10s)")
     elseif mouseOverlaps('sativus_h', 'game') then
@@ -856,12 +911,12 @@ function onUpdate()
 
 
     if soul3 and mouseOverlaps('site', 'game') and mouseClicked('left') and not hiding and not cooldown then
-        if distractCd then
+        if distractCd and soulPos ~= 7 then
         playSound('tv', 0.5)
         playSound('taunt', 0.5)
         distractCd = false
-        soulPos = soulPos - 3
-        runTimer('distractCd', 20)
+        soulPos = soulPos - 4
+        runTimer('distractCd', 24)
         setTextString('site_t', 'RM?-?')
         setTextString('distract', 'wait...')
         end
@@ -877,13 +932,22 @@ function onUpdate()
         end
     end
 
-    if mouseOverlaps('warn_h', 'game') and mouseClicked('left') and warn and not hiding and not cooldown then
-        playSound('alarm', 1 * volume)
-        cancelTimer('warnAnim1')
-        cancelTimer('warnAnim2')
-        setProperty('warn.alpha', 0)
-        warn = false
-        runTimer('warn', getRandomInt(20, 35) * difficulty)
+    if mouseOverlaps('warn_h', 'game') and not hiding and not cooldown then
+        if warn and mouseClicked('left') then
+            playSound('alarm', 1 * volume)
+            cancelTimer('warnAnim1')
+            cancelTimer('warnAnim2')
+            setProperty('warn.alpha', 0)
+            warn = false
+            runTimer('warn', getRandomInt(20, 30) * difficulty * alertlevel)
+        elseif warn2 and flash then
+            playSound('alarm', 1 * volume)
+            cancelTimer('warnAnim1_2')
+            cancelTimer('warnAnim2_2')
+            setProperty('warn2.alpha', 0)
+            warn2 = false
+            runTimer('warn', getRandomInt(10, 30) * difficulty * alertlevel)
+        end
     end
 
     if mouseOverlaps('hide_h', 'game') and mouseClicked('left') and not hiding and not cooldown and camPos == 0 then
@@ -913,7 +977,7 @@ function onUpdate()
             playSound('generator', 0.6 * volume)
             lilium = 15
             setTextString('lilium_t', 'Time: '..lilium)
-            runTimer('lilium', 0.7, 15)
+            runTimer('lilium', 0.5, 15)
             playSound('lilium', 0.3 * volume, 'lilium')
         elseif lilium == 0 and item ~= 'lilium' then
             setTextString('lilium_t', '...')
@@ -1052,6 +1116,17 @@ end
 
 function onTimerCompleted(tag)
 
+    if tag == 'catAppear' then
+        cathp = 30
+        runTimer('catAppear', getRandomInt(20, 36) * catlevel)
+        runTimer('catKill', 9)
+    end
+
+    if tag == 'catKill' then
+        onJumpscare('cat', 1)
+    end
+
+
     if tag == 'distractCd' then
         distractCd = true
         setTextString('distract', 'distract')
@@ -1067,13 +1142,34 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'punches' and not jumpscared and ultimate then
+
+        if getRandomBool(40) then
         playSound('punchs')
         runTimer('punchesEnd', 1.6)
+        runTimer('punches', getRandomInt(8, 15) * ultiDiff)
 
-        cancelTimer('lightLaugh')
-        runTimer('lightLaugh', getRandomInt(6, 15)) --LLTIME
-        cancelTimer('hideLaugh')
-        runTimer('hideLaugh', getRandomInt(5, 15))
+        else
+            if lights then
+                if getRandomBool(70) then
+                cancelTimer('sayCheese')
+                cancelTimer('ratEat')
+                cancelTimer('changeSound')
+
+                playSound('laugh'..getRandomInt(2, 3))
+                runTimer('laughDead2', 3)
+                runTimer('punches', getRandomInt(8, 15) * ultiDiff)
+                else
+                cancelTimer('sayCheese')
+
+                playSound('laugh'..getRandomInt(0, 1))
+                runTimer('laughDead1', 3)
+
+                runTimer('punches', getRandomInt(6, 15) * ultiDiff)
+                end
+            else
+                runTimer('punches', getRandomInt(8, 15) * ultiDiff)
+            end
+        end
     end
 
 
@@ -1082,74 +1178,42 @@ function onTimerCompleted(tag)
         runTimer('punchesthing', 1.6)
 
         if camPos == 0 then
-            onJumpscare('her')
+            onJumpscare('punches', 0)
         end
 
-        runTimer('punches', getRandomInt(6, 15))
+        runTimer('punches', getRandomInt(6, 15) * ultiDiff)
     end
 
     if tag == 'punchesRepeat' and not jumpscared and ultimate then
         if camPos == 0 then
-            onJumpscare('her')
+            onJumpscare('punches', 0)
         end
 
-        runTimer('punches', getRandomInt(6, 15)) --PTIME
+        runTimer('punches', getRandomInt(6, 15) * ultiDiff) --PTIME
     end
 
     if tag == 'punchesthing' then
-        playSound('')
+        playSound('gone')
     end
 
-
-
-
-    if tag == 'hideLaugh' and ultimate and not jumpscared then
-        cancelTimer('sayCheese')
-        cancelTimer('lightLaugh')
-
-        playSound('laugh'..getRandomInt(0, 1))
-        runTimer('laughDead1', 3)
-
-        cancelTimer('punches')
-        runTimer('punches', getRandomInt(6, 15))
-    end
 
 
 
     if tag == 'laughDead1' and not jumpscared and ultimate then
         if hiding then
-            playSound('')
-            runTimer('hideLaugh', getRandomInt(5, 15))
-            runTimer('punches', getRandomInt(6, 15))
-            runTimer('lightLaugh', getRandomInt(6, 15))
+            playSound('gone')
         elseif not hiding then
-            onJumpscare('her')
+            onJumpscare('left_laugh', 0)
         end
     end
 
 
-
-
-    if tag == 'lightLaugh' and ultimate and not jumpscared then
-        cancelTimer('sayCheese')
-        cancelTimer('ratEat')
-        cancelTimer('changeSound')
-
-        cancelTimer('hideLaugh')
-        cancelTimer('punches')
-
-        playSound('laugh'..getRandomInt(2, 3))
-        runTimer('laughDead2', 3)
-    end
-
     if tag == 'laughDead2' and not jumpscared and ultimate then
-        cancelTimer('hideLaugh')
-        runTimer('punches', getRandomInt(6, 15))
 
         if not lights then
-            playSound('open')
+            playSound('gone')
         elseif lights then
-            onJumpscare('her')
+            onJumpscare('right_laugh', 0)
         end
     end
 
@@ -1171,8 +1235,6 @@ function onTimerCompleted(tag)
         if night == 5 then
             runTimer('ratEat', getRandomInt(8, 12))
             runTimer('changeSound', getRandomInt(15, 30) * musiclevel * difficulty)
-            runTimer('hideLaugh', getRandomInt(5, 15)) --HLTIME
-            runTimer('lightLaugh', getRandomInt(10, 15)) --LLTIME
         end
     end
 
@@ -1181,10 +1243,9 @@ function onTimerCompleted(tag)
 
 
     if tag == 'sayCheese' and soul0 then
-        cancelTimer('lightLaugh')
-        cancelTimer('hideLaugh')
         cancelTimer('changeSound')
         cancelTimer('punches')
+        runTimer('punches', getRandomInt(6, 10) * ultiDiff)
 
         setProperty('soul0i.alpha', 1)
         playSound('saycheese', 0.7 * volume)
@@ -1200,9 +1261,7 @@ function onTimerCompleted(tag)
             cameraFlash('other', 'FFFFFF', 1)
             playSound('shot')
             runTimer('sayCheese2', 2)
-            runTimer('punches', getRandomInt(6, 10))
-            runTimer('hideLaugh', getRandomInt(5, 15)) --HLTIME
-            runTimer('lightLaugh', getRandomInt(10, 15)) --LLTIME
+            
         else
             lightsDown()
             cancelTimer('changeSound')
@@ -1250,29 +1309,37 @@ function onTimerCompleted(tag)
         setProperty('soul3.angle', getRandomFloat(-1, 1))
     end
 
-    if tag == 'canRestart' then
-        canRestart = true
-    end
 
     if tag == 'endGame' then
 
         if night ~= 6 then
             setDataFromSave('thwlTests', name..'-night'..night, 1)
+            flushSaveData('thwlTests')
         elseif night == 6 then
+            minusWarn = 0
             minusFish = fishlevel * 100
             minusMusic = musiclevel * 100
             minusDoor = doorlevel * 100
             minusCamera = cameralevel * 100
-            minusWarn = 0
+            minusCat = catlevel * 100
+            minusWarn2 = alertlevel * 100
+            
 
-            totalScore = 800 - minusFish - minusMusic - minusDoor - minusCamera - minusWarn
+            totalScore = 1100 - minusFish - minusMusic - minusDoor - minusCamera - minusWarn
 
-            if totalScore > getDataFromSave('thwlTests', 'night6') then
-                setDataFromSave('thwlTests', 'night6', totalScore)
+            if totalScore > getDataFromSave('thwlTests', name..'-night6') then
+                setDataFromSave('thwlTests', name..'-night6', totalScore)
+                flushSaveData('thwlTests')
             end
         end
 
-        loadSong('menu')
+        if night < 5 then
+            setDataFromSave('thwlTests', 'night', getDataFromSave('thwlTests', 'night') + 1)
+            loadSong('office')
+        elseif night >= 5 then
+            loadSong('menu')
+        end
+        
     end
 
     if tag == 'rare' then
@@ -1280,7 +1347,7 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'dieRepeat' and not hiding and not jumpscared and soul3 then
-        onJumpscare('closet')
+        onJumpscare('closet', 0)
     end
 
     if tag == 'dieCount' and soul3 then
@@ -1293,13 +1360,13 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'dieKill1' and soul3 then
-        runTimer('dieRepeat', 0.2, 14)
-        runTimer('dieKill2', 3)
+        runTimer('dieRepeat', 0.2, 9)
+        runTimer('dieKill2', 2)
     end
 
     if tag == 'dieKill2' and not jumpscared and soul3 then
 
-        playSound('')
+        playSound('gone')
         soulPos = 1
         setTextString('site_t', 'RM1-A')
 
@@ -1325,8 +1392,6 @@ function onTimerCompleted(tag)
 
     if tag == 'changeSound' and soul2 then
         cancelTimer('sayCheese')
-        cancelTimer('hideLaugh')
-        cancelTimer('lightLaugh')
         cancelTimer('punches')
 
         setSoundVolume('musicFile', 0)
@@ -1337,7 +1402,7 @@ function onTimerCompleted(tag)
         doTweenAlpha('b', 'blackScreen', 0, 3, 'bounceInOut')
         runTimer('killSound', 8 * difficulty * ttk)
         runTimer('sayCheese', getRandomInt(23, 30) * cameralevel * difficulty)
-        runTimer('punches', getRandomInt(5, 10))
+        runTimer('punches', getRandomInt(6, 10) * ultiDiff)
     end
 
 
@@ -1352,22 +1417,22 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'ratKill' and soul1 then
-        onJumpscare('cheese')
+        onJumpscare('cheese', 0)
     end
 
     if tag == 'killSound' and soul2 then
 
         if musicFile ~= needMusic then
-            onJumpscare('music')
+            onJumpscare('music', 0)
+
         elseif musicFile == needMusic then
             runTimer('changeSound', getRandomInt(15, 30) * musiclevel * difficulty)
-            runTimer('hideLaugh', getRandomInt(6, 15)) --HLTIME
-            runTimer('lightLaugh', getRandomInt(10, 15)) --LLTIME
+            runTimer('punches', getRandomInt(6, 15) * ultiDiff) --HLTIME
         end
     end
 
     if tag == 'killSound2' and musicFile ~= needMusic and soul2 then
-        onJumpscare('music')
+        onJumpscare('music', 0)
     end
 
     if tag == 'newTask' then
@@ -1422,13 +1487,32 @@ function onTimerCompleted(tag)
     end
 
     if tag == 'warn' and alert then
-        playSound('warn', 0.8 * volume, 'warn')
-        setProperty('warn.alpha', 1)
-        doTweenAlpha('warn', 'warn', 0, 0.15, 'bounceInOut')
-        runTimer('warnAnim2', 0.25)
-        warn = true
+        if not warn and not warn2 then
+            if not getRandomBool(100) then
+                playSound('warn', 0.8 * volume, 'warn')
+                setProperty('warn.alpha', 1)
+                doTweenAlpha('warn', 'warn', 0, 0.15, 'bounceInOut')
+                runTimer('warnAnim2', 0.25)
+                warn = true
+            else
+                playSound('warn2', 0.8 * volume, 'warn')
+                setProperty('warn2.alpha', 1)
+                doTweenAlpha('warn2', 'warn2', 0, 0.15, 'bounceInOut')
+                runTimer('warnAnim2_2', 0.25)
+                runTimer('warn2Kill', 8)
+                warn2 = true
+            end
+        end
     end
 
+
+    if tag == 'warnAnim2_2' then
+        stopSound('warn2')
+        playSound('warn2', 0.8 * volume, 'warn2')
+        setProperty('warn2.alpha', 1)
+        doTweenAlpha('warn2', 'warn2', 0, 0.3, 'expoIn')
+        runTimer('warnAnim2_2', 0.5)
+    end
 
     if tag == 'warnAnim2' then
         stopSound('warn')
@@ -1438,12 +1522,27 @@ function onTimerCompleted(tag)
         runTimer('warnAnim2', 0.25)
     end
 
+    if tag == 'warn2Kill' and warn2 then
+        onJumpscare('warn2', 1)
+    end
+
     if tag == 'music' then
         playSound('empty', 0.4 * volume, 'empty', true)
         doTweenAlpha('b', 'blackScreen', 0, 2)
         playSound('song1', 0.3 * filevolume, 'musicFile', true)
-        if night > 4 then
-            playMusic('custom', 0.15 * volume, true)
+
+        if night == 5 then
+            if not getDataFromSave('thwlTests', name..'music') then
+                playMusic('custom', 0.15 * volume, true)
+            else
+                playMusic('office1', 0.5 * volume, true)
+            end
+        elseif night == 6 then
+            if not getDataFromSave('thwlTests', name..'music') then
+                playMusic('office', 0.15 * volume, true)
+            else
+                playMusic('custom1', 0.4 * volume, true)
+            end
         end
     end
 
@@ -1600,6 +1699,8 @@ function checkItems()
             cancelTimer('warn')
             cancelTimer('warnAnim1')
             cancelTimer('warnAnim2')
+            cancelTimer('warnAnim1_2')
+            cancelTimer('warnAnim2_2')
             cancelTimer('cooldown')
             cancelTimer('ratEat')
             cancelTimer('ratKill')
@@ -1609,6 +1710,8 @@ function checkItems()
             stopSound('empty')
             stopSound('musicFile')
             stopSound(_)
+            cancelTimer('punches')
+            volume = 0
             cooldown = true
 
             playSound('win', 1)
@@ -1635,15 +1738,20 @@ end
 
 
 
-function onJumpscare(who)
+function onJumpscare(who, num)
     soul1 = false
     soul2 = false
     soul3 = false
     soul0 = false
 
+    setSoundVolume('empty', 0)
+
     jumpscared = true
+    cancelTimer('warn')
+    cancelTimer('warn2Kill')
+    cancelTimer('catAppear')
+    cancelTimer('catKill')
     setSoundVolume('musicFile', 0)
-    runTimer('canRestart', 4)
     cancelTimer('dieCount')
     cancelTimer('dieKill1')
     cancelTimer('dieKill2')
@@ -1652,20 +1760,30 @@ function onJumpscare(who)
     cancelTimer('changeSound')
     cancelTimer('killSound')
     cancelTimer('killSound2')
+    cancelTimer('sayCheese')
+    cancelTimer('sayCheese1')
+    cancelTimer('sayCheese2')
 
     playSound('scream-2', 1, 'scream')
     cancelTimer('warn')
     cancelTimer('warnAnim1')
     cancelTimer('warnAnim2')
+    cancelTimer('warnAnim1_2')
+    cancelTimer('warnAnim2_2')
     stopSound('warn')
     stopSound('empty')
     stopSound(_)
 
     makeLuaSprite('red', '')
-    makeGraphic('red', 1280, 720, 'FF0000')
     setObjectCamera('red', 'other')
     addLuaSprite('red', true)
     doTweenColor('red', 'red', '000000', 3, 'expoIn')
+
+    if num == 0 then
+        makeGraphic('red', 1280, 720, 'FF0000')
+    elseif num == 1 then
+        makeGraphic('red', 1280, 720, '00FFFF')
+    end
 
     makeLuaText('gameover', "YOU'RE DEAD", 1280, 0, 300)
     setTextSize('gameover', 42)
@@ -1676,12 +1794,17 @@ function onJumpscare(who)
     addLuaText('gameover', true)
     setProperty('gameover.scale.x', 1.2)
     setProperty('gameover.scale.y', 1.2)
-    startTween('goScale', 'gameover.scale', {x = 1, y = 1}, 0.3, {ease = 'linear'})
-    doTweenColor('goColor', 'gameover', 'FF0000', 3, 'expoIn')
+    startTween('goScale', 'gameover.scale', {x = 1, y = 1}, 0.6, {ease = 'expoOut'})
+
+    if num == 0 then
+        doTweenColor('goColor', 'gameover', 'FF0000', 3, 'expoIn')
+    elseif num == 1 then
+        doTweenColor('goColor', 'gameover', '00FFFF', 3, 'expoIn')
+    end
 
 
-    makeLuaText('who', who, 1280, 0, 650)
-    setTextSize('who', 24)
+    makeLuaText('who', '', 1280, 0, 650)
+    setTextSize('who', 20)
     setObjectCamera('who', 'other')
     setTextFont('who', 'ROCC.TTF')
     setProperty('who.antialiasing', true)
@@ -1690,7 +1813,26 @@ function onJumpscare(who)
     setProperty('who.alpha', 0)
     doTweenAlpha('who', 'who', 0.15, 6, 'expoIn')
 
-    makeLuaText('restart', 'click to restart', 1280, 0, 600)
+    if who == 'cheese' then
+        setTextString('who', 'Make sure you constantly look down and serve food.')
+    elseif who == 'music' then
+        setTextString('who', 'If the lights dim, switch to the corresponding song.')
+    elseif who == 'closet' then
+        setTextString('who', 'If you hear a whisper, hide in the closet.')
+    elseif who == 'right_laugh' then
+        setTextString('who', 'If you hear laughter on the right, turn the lights off and on.')
+    elseif who == 'left_laugh' then
+        setTextString('who', 'If you hear laughter on the left, hide in the closet.')
+    elseif who == 'punches' then
+        setTextString('who', 'If you hear knocking, look down.')
+
+    elseif who == 'cat' then
+        setTextString('who', 'Point to the monster that appears at the entrance with the flashlight.')
+    elseif who == 'warn2' then
+        setTextString('who', 'Point the flashlight at the blue alarm.')
+    end
+
+    makeLuaText('restart', 'press "R" to restart', 1280, 0, 600)
     setTextSize('restart', 24)
     setObjectCamera('restart', 'other')
     setTextBorder('restart', 0)
@@ -1700,7 +1842,11 @@ function onJumpscare(who)
     setProperty('restart.alpha', 0)
     doTweenAlpha('restart', 'restart', 0.5, 6, 'expoIn')
 
-    makeLuaSprite('blood', 'hailey/bloodEffect')
+    if num == 0 then
+        makeLuaSprite('blood', 'hailey/bloodEffect')
+    elseif num == 1 then
+        makeLuaSprite('blood', 'hailey/bloodEffect2')
+    end
     setObjectCamera('blood', 'other')
     addLuaSprite('blood', true)
     setBlendMode('blood', 'add')

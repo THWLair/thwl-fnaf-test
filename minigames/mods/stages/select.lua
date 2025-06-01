@@ -5,10 +5,14 @@ function onCreate()
 	starting = false
 	canTouch = true
 	menu = ''
+
+	alert = 2
 	fish = 2
 	music = 2
 	door = 2
 	camera = 2
+	cat = 2
+
 	name = getDataFromSave('thwlTests', 'username')
 
 	precacheMusic('music')
@@ -258,6 +262,22 @@ function onCreate()
 	setObjectCamera('q', 'other')
 
 
+	makeLuaText('music', 'OG Music', 150, 900 + 30, 600)
+	setTextSize('music', 20)
+	setTextBorder('music', 0)
+	setProperty('music.alpha', 0.6)
+	setTextFont('music', 'ROCK.TTF')
+	setTextAlignment('music', 'right')
+    setProperty('music.antialiasing', true)
+	setObjectCamera('music', 'other')
+	addLuaText('music')
+	doTweenX('music', 'music', 900, 2, 'expoOut')
+
+	makeLuaSprite('m', '', 900, 595)
+	makeGraphic('m', 150, 40, '222222')
+	setObjectCamera('m', 'other')
+
+
 
 	makeLuaSprite('overlay', '')
 	makeGraphic('overlay', 1290, 730, '101010')
@@ -349,6 +369,20 @@ function onCreate()
 	addLuaText('custtxt2', true)
 	setProperty('custtxt2.alpha', 0)
 
+	makeLuaSprite('selectalert', 'hailey/selectalert', 140, 300)
+	setObjectCamera('selectalert', 'other')
+	scaleObject('selectalert', 0.7, 0.7)
+	addLuaSprite('selectalert', true)
+	setProperty('selectalert.alpha', 0)
+
+	makeLuaText('satxt', 'Level 0', getProperty('selectalert.width'), getProperty('selectalert.x'), getProperty('selectalert.y') + 170)
+	setTextSize('satxt', 20)
+	setTextFont('satxt', 'ROCKB.TTF')
+    setProperty('satxt.antialiasing', true)
+	setObjectCamera('satxt', 'other')
+	addLuaText('satxt')
+	setProperty('satxt.alpha', 0)
+
 	makeLuaSprite('selectfish', 'hailey/selectfish', 300, 300)
 	setObjectCamera('selectfish', 'other')
 	scaleObject('selectfish', 0.7, 0.7)
@@ -404,6 +438,20 @@ function onCreate()
 	setObjectCamera('sctxt', 'other')
 	addLuaText('sctxt')
 	setProperty('sctxt.alpha', 0)
+
+	makeLuaSprite('selectcat', 'hailey/selectcat', 940, 300)
+	setObjectCamera('selectcat', 'other')
+	scaleObject('selectcat', 0.7, 0.7)
+	addLuaSprite('selectcat', true)
+	setProperty('selectcat.alpha', 0)
+
+	makeLuaText('sctxt2', 'Level 0', getProperty('selectcat.width'), getProperty('selectcat.x'), getProperty('selectcat.y') + 170)
+	setTextSize('sctxt2', 20)
+	setTextFont('sctxt2', 'ROCKB.TTF')
+    setProperty('sctxt2.antialiasing', true)
+	setObjectCamera('sctxt2', 'other')
+	addLuaText('sctxt2')
+	setProperty('sctxt2.alpha', 0)
 
 	makeLuaText('pfptxt1', 'PROFILE', 1280, 0, 200)
 	setTextSize('pfptxt1', 30)
@@ -502,6 +550,8 @@ function onCreate()
 	setProperty('cash.alpha', 0.5)
 	setProperty('hunter.alpha', 0.5)
 
+	flushSaveData('thwlTests')
+
 end
 
 function onUpdate()
@@ -557,14 +607,18 @@ function onUpdate()
 			elseif menu == 'custom' then
 				doTweenAlpha('cust1', 'custtxt1', 0, 0.5, 'expoOut')
 				doTweenAlpha('cust2', 'custtxt2', 0, 0.5, 'expoOut')
+				doTweenAlpha('selectalert', 'selectalert', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectfish', 'selectfish', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectmusic', 'selectmusic', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectdoor', 'selectdoor', 0, 0.5, 'expoOut')
 				doTweenAlpha('selectcamera', 'selectcamera', 0, 0.5, 'expoOut')
+				doTweenAlpha('selectcat', 'selectcat', 0, 0.5, 'expoOut')
+				doTweenAlpha('satxt', 'satxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sftxt', 'sftxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('smtxt', 'smtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sdtxt', 'sdtxt', 0, 0.5, 'expoOut')
 				doTweenAlpha('sctxt', 'sctxt', 0, 0.5, 'expoOut')
+				doTweenAlpha('sctxt2', 'sctxt', 0, 0.5, 'expoOut')
 			elseif menu == 'profile' then
 				doTweenAlpha('pfp1', 'pfptxt1', 0, 0.5, 'expoOut')
 			doTweenAlpha('pfp2', 'pfptxt2', 0, 0.5, 'expoOut')
@@ -600,10 +654,12 @@ function onUpdate()
 
 		if mouseClicked('left') then
 			setDataFromSave('thwlTests', 'night', 6)
+			setDataFromSave('thwlTests', 'alertlevel', alert)
 			setDataFromSave('thwlTests', 'fishlevel', fish)
 			setDataFromSave('thwlTests', 'musiclevel', music)
 			setDataFromSave('thwlTests', 'doorlevel', door)
 			setDataFromSave('thwlTests', 'cameralevel', camera)
+			setDataFromSave('thwlTests', 'catlevel', camera)
 			onStartNight()
 		end
 	else
@@ -616,16 +672,51 @@ function onUpdate()
 
 
 
+	if menu == 'custom' and mouseOverlaps('selectalert', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+
+			if alert == 0.4 then
+				alert = 2
+			elseif alert > 0.4 then
+				alert = alert - 0.1
+			end
+
+			setTextString('satxt', 'Level '..(20 - (alert * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if alert == 2 then
+				alert = 0.4
+			elseif alert < 2 then
+				alert = alert + 0.1
+			end
+
+			setTextString('satxt', 'Level '..(20 - (alert * 10)))
+		end
+	end
+
 
 	if menu == 'custom' and mouseOverlaps('selectfish', 'camOther') and not starting then
 
 		if mouseClicked('left') then
 			playSound('tick')
 
-			if fish < 0.4 then
+			if fish == 0.4 then
 				fish = 2
-			elseif fish > 0.4 then
+			elseif alert > 0.4 then
 				fish = fish - 0.1
+			end
+
+			setTextString('sftxt', 'Level '..(20 - (fish * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if fish == 2 then
+				fish = 0.4
+			elseif fish < 2 then
+				fish = fish + 0.1
 			end
 
 			setTextString('sftxt', 'Level '..(20 - (fish * 10)))
@@ -638,10 +729,20 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 
-			if music < 0.4 then
+			if music == 0.4 then
 				music = 2
 			elseif music > 0.4 then
 				music = music - 0.1
+			end
+
+			setTextString('smtxt', 'Level '..(20 - (music * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if music == 2 then
+				music = 0.4
+			elseif music < 2 then
+				music = fish + 0.1
 			end
 
 			setTextString('smtxt', 'Level '..(20 - (music * 10)))
@@ -654,10 +755,20 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 
-			if door < 0.4 then
+			if door == 0.4 then
 				door = 2
 			elseif door > 0.4 then
 				door = door - 0.1
+			end
+
+			setTextString('sdtxt', 'Level '..(20 - (door * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if door == 2 then
+				door = 0.4
+			elseif door < 2 then
+				door = fish + 0.1
 			end
 
 			setTextString('sdtxt', 'Level '..(20 - (door * 10)))
@@ -669,13 +780,48 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 
-			if camera < 0.4 then
+			if camera == 0.4 then
 				camera = 2
 			elseif camera > 0.4 then
 				camera = camera - 0.1
 			end
 
 			setTextString('sctxt', 'Level '..(20 - (camera * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if camera == 2 then
+				camera = 0.4
+			elseif camera < 2 then
+				camera = camera + 0.1
+			end
+
+			setTextString('sctxt', 'Level '..(20 - (camera * 10)))
+		end
+	end
+
+	if menu == 'custom' and mouseOverlaps('selectcat', 'camOther') and not starting then
+
+		if mouseClicked('left') then
+			playSound('tick')
+
+			if cat == 0.4 then
+				cat = 2
+			elseif cat > 0.4 then
+				cat = cat - 0.1
+			end
+
+			setTextString('sctxt2', 'Level '..(20 - (cat * 10)))
+		elseif mouseClicked('right') then
+			playSound('tick')
+
+			if cat == 2 then
+				cat = 0.4
+			elseif cat < 2 then
+				cat = cat + 0.1
+			end
+
+			setTextString('sctxt2', 'Level '..(20 - (cat * 10)))
 		end
 	end
 
@@ -707,6 +853,7 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 			setDataFromSave('thwlTests', name..'-pfp', 1)
+			flushSaveData('thwlTests')
 		end
 	end
 
@@ -716,6 +863,7 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 			setDataFromSave('thwlTests', name..'-pfp', 0)
+			flushSaveData('thwlTests')
 		end
 	end
 
@@ -725,6 +873,7 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 			setDataFromSave('thwlTests', name..'-pfp', 2)
+			flushSaveData('thwlTests')
 		end
 	end
 
@@ -733,6 +882,7 @@ function onUpdate()
 		if mouseClicked('left') then
 			playSound('tick')
 			setDataFromSave('thwlTests', name..'-pfp', 3)
+			flushSaveData('thwlTests')
 		end
 	end
 
@@ -873,14 +1023,18 @@ function onUpdate()
 		if mouseClicked('left') then
 			doTweenAlpha('cust1', 'custtxt1', 1, 0.5, 'expoOut')
 			doTweenAlpha('cust2', 'custtxt2', 1, 0.5, 'expoOut')
+			doTweenAlpha('selectalert', 'selectalert', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectfish', 'selectfish', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectmusic', 'selectmusic', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectdoor', 'selectdoor', 1, 0.5, 'expoOut')
 			doTweenAlpha('selectcamera', 'selectcamera', 1, 0.5, 'expoOut')
+			doTweenAlpha('selectcat', 'selectcat', 1, 0.5, 'expoOut')
+			doTweenAlpha('satxt', 'satxt', 1, 0.5, 'expoOut')
 			doTweenAlpha('sftxt', 'sftxt', 1, 0.5, 'expoOut')
 			doTweenAlpha('smtxt', 'smtxt', 1, 0.5, 'expoOut')
 			doTweenAlpha('sdtxt', 'sdtxt', 1, 0.5, 'expoOut')
 			doTweenAlpha('sctxt', 'sctxt', 1, 0.5, 'expoOut')
+			doTweenAlpha('sctxt2', 'sctxt2', 1, 0.5, 'expoOut')
 			doTweenAlpha('start', 'start', 1, 0.5, 'expoOut')
 			doTweenAlpha('back', 'back', 1, 0.5, 'expoOut')
 			doTweenAlpha('overlay', 'overlay', 0.5, 0.5, 'expoOut')
@@ -950,6 +1104,7 @@ function onUpdate()
 
 
 
+
 	if menu == '' and mouseOverlaps('q', 'camOther') and not starting then
 
 		if getProperty('quit.alpha') ~= 1 then
@@ -967,6 +1122,44 @@ function onUpdate()
 		setProperty('quit.alpha', 0.6)
 		doTweenX('q1', 'quit', 900, 0.5, 'expoOut')
 	end
+
+
+if menu == '' and mouseOverlaps('m', 'camOther') and not starting then
+
+		if getProperty('music.alpha') ~= 1 then
+			playSound('scrollMenu', 0.5)
+			setProperty('music.alpha', 1)
+
+			if not getDataFromSave('thwlTests', name..'music') then
+				setTextString('music', '> OG Music')
+			else
+				setTextString('music', '> FNAF Music')
+			end
+
+			doTweenX('m1', 'music', 900 - 10, 0.5, 'expoOut')
+		end
+
+		if mouseClicked('left') then
+			playSound('gone')
+
+			if not getDataFromSave('thwlTests', name..'music') then
+				setDataFromSave('thwlTests', name..'music', true)
+			else
+				setDataFromSave('thwlTests', name..'music', false)
+			end
+			flushSaveData('thwlTests')
+		end
+	else
+		if not getDataFromSave('thwlTests', name..'music') then
+			setTextString('music', 'OG Music')
+		else
+			setTextString('music', 'FNAF Music')
+		end
+
+		setProperty('music.alpha', 0.6)
+		doTweenX('m1', 'music', 900, 0.5, 'expoOut')
+	end
+
 
 
 
