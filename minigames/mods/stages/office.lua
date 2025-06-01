@@ -829,7 +829,7 @@ function onUpdate()
         doTweenX('filex', 'file', 2720, 0.5, 'expoOut')
         runTimer('killSound2', 4 * musiclevel * difficulty)
         stopSound('musicFile')
-        playSound('song'..musicFile, 0.3, 'musicFile', true)
+        playSound('song'..musicFile, 0.3 * filevolume, 'musicFile', true)
     end
 
 
