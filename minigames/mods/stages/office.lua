@@ -1132,7 +1132,7 @@ function onTimerCompleted(tag)
 
         else
             if lights then
-                if getRandomBool(70) then
+                if getRandomBool(40) then
                 cancelTimer('sayCheese')
                 cancelTimer('ratEat')
                 cancelTimer('changeSound')
