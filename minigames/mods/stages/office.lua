@@ -155,7 +155,7 @@ function onCreate()
     
 
     jumpscared = false
-    totalScore = 1500 - ((alertlevel * 125) + (fishlevel * 125) + (musiclevel * 125) + (doorlevel * 125) + (cameralevel * 125) + (catlevel * 125))
+    totalScore = string.format("%.0f", 1500 - ((alertlevel * 125) + (fishlevel * 125) + (musiclevel * 125) + (doorlevel * 125) + (cameralevel * 125) + (catlevel * 125)))
 
 
 
