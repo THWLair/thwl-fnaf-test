@@ -1307,10 +1307,11 @@ function onTimerCompleted(tag)
         elseif night == 6 then   
 
             if totalScore > getDataFromSave('thwlTests', name..'-night6') then
-                setDataFromSave('thwlTests', name..'-night6', totalScore)
-                flushSaveData('thwlTests')
-                loadSong('menu')
+                setDataFromSave('thwlTests', name..'-night6', totalScore)  
             end
+            
+            flushSaveData('thwlTests')
+            loadSong('menu')
         end
 
         
